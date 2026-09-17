@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoalUp · Вариация «Очередь» (по DESIGN_DESCRIPTION.md)</title>
+<style>
+  :root {
+    --canvas: #e9ebf1; --appbg: #f6f7fb; --surface: #fff;
+    --line: #eceef3; --ink: #1a2030; --muted: #8a92a6; --muted2: #6b7490;
+    --violet: #7c3aed; --violets: linear-gradient(135deg,#7c3aed,#8b5cf6); --violetsf: rgba(124,58,237,.09);
+    --green: #16a34a; --greensf: rgba(22,163,74,.1); --orange: #ea7228; --orangesf: rgba(234,114,40,.12);
+    --radius: 14px; --shadow: 0 1px 2px rgba(20,26,46,.05), 0 14px 30px -20px rgba(28,36,64,.25);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--canvas); color: var(--ink); -webkit-font-smoothing: antialiased; }
+  .head { padding: 26px 32px 8px; }
+  .head h1 { font-size: 22px; font-weight: 800; letter-spacing: -.01em; }
+  .head p { color: var(--muted2); font-size: 13px; margin-top: 4px; }
+  .canvas { padding: 22px 28px 48px; max-width: 1180px; }
+  .frame { background: var(--surface); border: 1px solid #dfe2ea; border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; }
+  .frame-bar { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-bottom: 1px solid var(--line); background: #fafbfd; }
+  .bar-dots { display: flex; gap: 6px; } .bar-dots i { width: 10px; height: 10px; border-radius: 50%; display: block; }
+  .bar-dots i:nth-child(1){background:#f66}.bar-dots i:nth-child(2){background:#fc0}.bar-dots i:nth-child(3){background:#3d6}
+  .bar-label { font-size: 12px; color: var(--muted2); margin-left: 10px; font-weight: 600; }
+  .app { background: var(--appbg); }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 1px 2px rgba(20,26,46,.03); }
+  .btn-primary { background: var(--violets); color: #fff; border: 0; border-radius: 10px; height: 38px; padding: 0 16px; font-size: 13.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; box-shadow: 0 10px 18px -10px rgba(124,58,237,.7); }
+  .btn-primary.sm { height: 32px; font-size: 12.5px; padding: 0 12px; border-radius: 8px; }
+  .grad-text { font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 999px; }
+  .tg { color: var(--green); background: var(--greensf); } .to { color: var(--orange); background: var(--orangesf); } .tv { color: var(--violet); background: var(--violetsf); }
+
+  /* dashboard */
+  .dash { display: grid; grid-template-columns: 176px 1fr 300px; min-height: 640px; }
+  .sd { border-right: 1px solid var(--line); background: var(--surface); padding: 18px 12px; display: flex; flex-direction: column; }
+  .logo { display: flex; align-items: center; gap: 9px; padding: 2px 10px 20px; font-weight: 800; font-size: 16.5px; }
+  .sd .item { display: flex; align-items: center; gap: 10px; padding: 9px 11px; border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--muted2); margin-bottom: 3px; }
+  .sd .item.on { background: var(--violetsf); color: var(--violet); }
+  .user { margin-top: auto; border: 1px solid var(--line); border-radius: 12px; padding: 10px; display: flex; align-items: center; gap: 9px; background: var(--surface); }
+  .user .ava { width: 34px; height: 34px; border-radius: 50%; background: var(--violets); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; }
+  .user .nm { font-size: 13px; font-weight: 700; } .user .em { font-size: 11px; color: var(--muted); } .user .ar { margin-left: auto; color: var(--muted); }
+
+  .main { padding: 20px 24px; }
+  .hrow { display: flex; align-items: center; justify-content: space-between; }
+  .crumbs { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .hello { margin-top: 16px; font-size: 23px; font-weight: 800; }
+  .hello-sub { color: var(--muted2); font-size: 13px; margin-top: 3px; }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 18px; }
+  .stat { padding: 15px 16px; }
+  .stat .k { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .stat .v { font-size: 22px; font-weight: 800; margin-top: 6px; font-variant-numeric: tabular-nums; }
+  .stat .d { font-size: 12px; font-weight: 700; margin-top: 6px; }
+  .stat .d.up { color: var(--green); } .stat .d.mut { color: var(--muted); font-weight: 600; }
+
+  /* queue */
+  .sec { display: flex; align-items: center; justify-content: space-between; margin: 22px 0 12px; }
+  .sec h2 { font-size: 16px; font-weight: 800; }
+  .qgoal { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 16px 18px; margin-bottom: 10px; }
+  .qgoal.active { border-color: rgba(124,58,237,.45); box-shadow: 0 0 0 3px var(--violetsf); }
+  .q-head { display: flex; align-items: center; gap: 12px; }
+  .q-order { width: 30px; height: 30px; border-radius: 50%; background: #ececf4; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; color: var(--muted2); flex: none; }
+  .qgoal.active .q-order { background: var(--violets); color: #fff; }
+  .q-ico { font-size: 22px; }
+  .q-name { font-weight: 800; font-size: 14.5px; }
+  .q-meta { font-size: 12px; color: var(--muted); }
+  .q-chips { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+  .bar { height: 10px; border-radius: 99px; background: var(--appbg); margin-top: 12px; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--violets); }
+  .qgoal.active .bar i { background: linear-gradient(90deg,#7c3aed,#a855f7); }
+  .q-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; font-size: 12.5px; color: var(--muted); flex-wrap: wrap; }
+  .q-foot b { color: var(--ink); }
+  .cascade { margin-top: 10px; background: var(--violetsf); border-radius: 10px; padding: 10px 14px; font-size: 12.5px; }
+  .cascade b { color: var(--violet); }
+
+  /* right column */
+  .right { padding: 20px 18px; border-left: 1px solid var(--line); background: var(--appbg); }
+  .sum-card { background: var(--violets); color: #fff; border-radius: 16px; padding: 16px; }
+  .sum-card .k { font-size: 12px; opacity: .85; }
+  .sum-card .v { font-size: 26px; font-weight: 800; margin-top: 4px; }
+  .sum-card .delta { font-size: 12px; font-weight: 700; margin-top: 4px; opacity: .95; }
+  .ops { margin-top: 14px; }
+  .ops h4 { font-size: 13px; font-weight: 800; margin-bottom: 6px; }
+  .op { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 12.5px; }
+  .op .am { font-weight: 800; font-variant-numeric: tabular-nums; }
+  .op .am.in { color: var(--green); } .op .am.out { color: #dc2626; }
+  .rule { background: var(--surface); border: 1px dashed var(--line); border-radius: 12px; padding: 12px 14px; font-size: 12px; color: var(--muted2); margin-top: 14px; }
+  .rule b { color: var(--ink); }
+
+  .cta-done { background: var(--green); color: #fff; border: 0; border-radius: 10px; height: 36px; padding: 0 16px; font-size: 13px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 10px 18px -10px rgba(22,163,74,.6); }
+</style>
+</head>
+<body>
+
+<div class="head">
+  <h1>GoalUp — вариация «Очередь»</h1>
+  <p>Тот же фиолетовый концепт по DESIGN_DESCRIPTION.md, но главный экран переработан под нашу модель: общий кошелёк + очередь целей + каскад.</p>
+</div>
+
+<div class="canvas">
+  <div class="frame">
+    <div class="frame-bar"><span class="bar-dots"><i></i><i></i><i></i></span><span class="bar-label">desktop · главная (очередь + каскад)</span></div>
+    <div class="dash app">
+      <aside class="sd">
+        <div class="logo">
+          <svg width="26" height="26" viewBox="0 0 24 24"><defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c3aed"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><circle cx="12" cy="12" r="11" fill="#fff" stroke="#e6e3ef"/><ellipse cx="12" cy="5" rx="4" ry="7.5" fill="url(#lg)" transform="rotate(-24 12 12)"/><ellipse cx="12" cy="5" rx="4" ry="7.5" fill="#4f8df7" transform="rotate(96 12 12)"/><ellipse cx="12" cy="5" rx="4" ry="7.5" fill="#ed679a" transform="rotate(216 12 12)"/></svg>
+          GoalUp
+        </div>
+        <div class="item on"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5M5 9.5V21h14V9.5"/></svg>Главная</div>
+        <div class="item"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="7"/></svg>Мои цели</div>
+        <div class="item"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6h14M5 12h14M5 18h9"/></svg>Операции</div>
+        <div class="item"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V9M10 19V5M16 19v-8M22 19H2"/></svg>Статистика</div>
+        <div class="item"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 4a2 2 0 1 1-4 0 2 2 0 0 1 4 0Z"/><path d="M20 4l3 3-2 2-3-3M8 21h8M12 18v3"/></svg>Достижения</div>
+        <div class="item"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 3a9 9 0 0 1 8.6 6h-2M12 21a9 9 0 0 1-8.6-6M12 3a9 9 0 0 0-8.6 6"/></svg>Настройки</div>
+        <div class="user"><div class="ava">Д</div><div><div class="nm">Даня</div><div class="em">danya@mail.ru</div></div><span class="ar">›</span></div>
+      </aside>
+
+      <div class="main">
+        <div class="hrow">
+          <div class="crumbs">Главная</div>
+          <button class="btn-primary sm">＋ Пополнить</button>
+        </div>
+        <div class="hello">Привет, Даня! 👋</div>
+        <div class="hello-sub">В кошельке 216 000 ₽. Остаток каскада пойдёт на активную цель.</div>
+
+        <div class="stats">
+          <div class="card stat"><div class="k">Кошелёк сейчас</div><div class="v">216 000 ₽</div><div class="d up">+8 000 ₽ за 30 дней</div></div>
+          <div class="card stat"><div class="k">Активная цель</div><div class="v">1</div><div class="d mut">из 3 в очереди</div></div>
+          <div class="card stat"><div class="k">Свободный остаток</div><div class="v">108 000 ₽</div><div class="d mut">идёт на активную</div></div>
+          <div class="card stat"><div class="k">Ближайший дедлайн</div><div class="v">10.12</div><div class="d up">успеваешь</div></div>
+        </div>
+
+        <div class="sec"><h2>Очередь целей</h2><span style="color:var(--violet);font-size:13px;font-weight:700">Как работает очередь →</span></div>
+
+        <div class="qgoal active">
+          <div class="q-head">
+            <div class="q-order">1</div>
+            <span class="q-ico">🛟</span>
+            <div><div class="q-name">Подушка безопасности</div><div class="q-meta">порядок №1 · активная цель</div></div>
+            <div class="q-chips"><span class="grad-text tg">успеваешь</span></div>
+          </div>
+          <div class="bar"><i style="width:64%"></i></div>
+          <div class="q-foot">
+            <span>цель <b>300 000 ₽</b> · собрано <b>192 000 ₽</b> · осталось <b>108 000 ₽</b></span>
+            <span>темп <b>9 000 ₽/нед</b> · дедлайн <b>10 дек 2026</b> · прогноз <b>к 1 дек</b></span>
+            <button class="cta-done">Цель достигнута 🎉</button>
+          </div>
+          <div class="cascade">Каскад: после закрытия свободные <b>108 000 ₽</b> перетекут на следующую по очереди цель <b>«Отпуск в Грузии»</b>.</div>
+        </div>
+
+        <div class="qgoal">
+          <div class="q-head">
+            <div class="q-order">2</div>
+            <span class="q-ico">🏖️</span>
+            <div><div class="q-name">Отпуск в Грузии</div><div class="q-meta">порядок №2 · в ожидании каскада</div></div>
+            <div class="q-chips"><span class="grad-text tg">покрыта на 100%</span></div>
+          </div>
+          <div class="bar"><i style="width:100%;background:var(--green)"></i></div>
+          <div class="q-foot"><span>цель <b>120 000 ₽</b> · собрано <b>120 000 ₽</b></span><span>будет наполняться после цели №1</span></div>
+        </div>
+
+        <div class="qgoal">
+          <div class="q-head">
+            <div class="q-order">3</div>
+            <span class="q-ico">🚗</span>
+            <div><div class="q-name">Автомобиль</div><div class="q-meta">порядок №3 · в очереди</div></div>
+            <div class="q-chips"><span class="grad-text to">далеко</span></div>
+          </div>
+          <div class="bar"><i style="width:0%"></i></div>
+          <div class="q-foot"><span>цель <b>1 800 000 ₽</b> · осталось <b>1 800 000 ₽</b></span><span>прогноз: янв 2029</span></div>
+        </div>
+      </div>
+
+      <div class="right">
+        <div class="sum-card">
+          <div class="k">Всего накоплено</div>
+          <div class="v">216 000 ₽</div>
+          <div class="delta">+8 000 ₽ за 30 дней</div>
+        </div>
+        <div class="ops">
+          <h4>Последние операции</h4>
+          <div class="op"><span>Пополнение</span><span class="am in">+8 000 ₽</span></div>
+          <div class="op"><span>Снятие · такси</span><span class="am out">−3 000 ₽</span></div>
+          <div class="op"><span>Завершение · Отпуск</span><span class="am out" style="color:var(--violet)">−120 000 ₽</span></div>
+          <div class="op"><span>Завершение · MacBook</span><span class="am out" style="color:var(--violet)">−96 000 ₽</span></div>
+        </div>
+        <div class="rule">
+          <b>Правило каскада.</b> Все пополнения автоматически добегают до ближайшей незакрытой цели. Порядок меняется перетаскиванием. Снятие — только в пределах кошелька.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

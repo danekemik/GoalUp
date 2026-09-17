@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Вариант 2 — «Путь» · GoalUp</title>
+<style>
+  :root {
+    --bg: #fff7ec;
+    --card: #fffdf8;
+    --ink: #3b2f2f;
+    --soft: #8a7469;
+    --line: 3px solid #3b2f2f;
+    --coral: #ff6b4a;
+    --amber: #f6a609;
+    --green: #12b76a;
+    --radius: 26px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background:
+      radial-gradient(600px 300px at 85% -10%, rgba(246,166,9,.18), transparent),
+      radial-gradient(600px 320px at 5% 10%, rgba(255,107,74,.14), transparent),
+      var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 0 22px; }
+
+  /* ---------- Header ---------- */
+  header { padding: 22px 0 6px; }
+  .nav { display: flex; align-items: center; justify-content: space-between; }
+  .logo { font-size: 24px; font-weight: 900; letter-spacing: -.02em; }
+  .logo .pig { display: inline-block; }
+  .pills { display: flex; gap: 8px; }
+  .pill {
+    padding: 8px 16px; border-radius: 999px; font-size: 14px; font-weight: 600;
+    background: var(--card); border: 2px solid var(--ink);
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+  .pill.coral { background: var(--coral); color: #fff; }
+
+  /* ---------- Hero ---------- */
+  .hero { text-align: center; padding: 48px 0 20px; }
+  .hero .stamp {
+    display: inline-block; background: var(--card); border: var(--line);
+    padding: 6px 14px; border-radius: 999px; font-size: 13px; font-weight: 700;
+    transform: rotate(-1.5deg);
+  }
+  h1 { font-size: 54px; line-height: 1.05; letter-spacing: -.03em; font-weight: 900; margin: 22px 0 16px; }
+  h1 .coral-text { color: var(--coral); }
+  .lead { font-size: 18px; color: var(--soft); max-width: 560px; margin: 0 auto; }
+  .cta-row { display: flex; gap: 14px; justify-content: center; margin-top: 30px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px; padding: 15px 28px;
+    border: 3px solid var(--ink); border-radius: 999px; font-size: 16px; font-weight: 800;
+    background: var(--card); color: var(--ink); box-shadow: 5px 5px 0 var(--ink);
+    cursor: pointer; transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 var(--ink); }
+  .btn.coral { background: var(--coral); color: #fff; }
+
+  /* ---------- Bank (копилка) ---------- */
+  .bank-row { display: grid; grid-template-columns: 300px 1fr; gap: 30px; align-items: center; margin-top: 40px; padding: 30px; background: var(--card); border: var(--line); border-radius: 34px; box-shadow: 8px 8px 0 rgba(59,47,47,.12); }
+  .jar {
+    width: 200px; height: 240px; margin: 0 auto; position: relative;
+    border: 3px solid var(--ink); border-radius: 0 0 44px 44px / 0 0 60px 60px; overflow: hidden;
+    background: linear-gradient(180deg, #fff, #fdf3e3);
+  }
+  .jar::before { content: "💰"; position: absolute; left: 50%; top: -12px; transform: translateX(-50%); font-size: 30px; }
+  .jar .fill {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 64%;
+    background: repeating-linear-gradient(90deg, rgba(255,255,255,.18) 0 10px, transparent 10px 22px), linear-gradient(180deg, #ffd166, #ffb020);
+    border-top: 3px dashed rgba(59,47,47,.35);
+  }
+  .jar .coins { position: absolute; bottom: 8px; right: 10px; font-size: 22px; }
+  .bank-label { position: absolute; left: 0; right: 0; bottom: 6px; text-align: center; font-size: 13px; font-weight: 800; }
+  .bank-info .k { font-size: 14px; font-weight: 700; color: var(--soft); text-transform: uppercase; letter-spacing: .04em; }
+  .bank-info .v { font-size: 40px; font-weight: 900; line-height: 1.1; }
+  .bank-info .tags { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+  .tag { background: var(--bg); border: 2px dashed var(--ink); border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 700; }
+
+  /* ---------- Road ---------- */
+  .road-title { text-align: center; margin: 72px 0 8px; font-size: 34px; font-weight: 900; letter-spacing: -.02em; }
+  .road-sub { text-align: center; color: var(--soft); }
+  .road { margin-top: 34px; position: relative; padding: 10px 0; }
+  .road::before {
+    content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: 6px; margin-left: -3px;
+    background: repeating-linear-gradient(180deg, transparent 0 14px, var(--amber) 14px 24px);
+    border-radius: 999px;
+  }
+  .station { position: relative; display: flex; align-items: center; margin: 26px 0; }
+  .station .pin {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); z-index: 2;
+    width: 66px; height: 66px; border-radius: 50%; border: 3px solid var(--ink);
+    background: var(--card); display: flex; align-items: center; justify-content: center;
+    font-size: 28px; box-shadow: 4px 4px 0 rgba(59,47,47,.14);
+  }
+  .s-card {
+    width: 46%; background: var(--card); border: var(--line); border-radius: 26px;
+    padding: 20px 22px; box-shadow: 6px 6px 0 rgba(59,47,47,.1);
+  }
+  .station:nth-child(odd) .s-card { margin-right: auto; margin-left: 0; }
+  .station:nth-child(even) .s-card { margin-left: auto; margin-right: 0; }
+  .s-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .s-name { font-size: 17px; font-weight: 800; }
+  .flag { font-size: 12px; font-weight: 800; padding: 4px 11px; border-radius: 999px; }
+  .flag.done { background: #d9f7e7; color: #087443; }
+  .flag.go { background: #fff2c9; color: #9a6700; }
+  .s-amount { font-size: 13px; color: var(--soft); margin-top: 4px; }
+  .bar { height: 14px; border-radius: 999px; background: var(--bg); border: 2px solid var(--ink); margin: 12px 0 10px; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--coral), var(--amber)); }
+  .s-card.done .bar i { background: var(--green); }
+  .milestones { display: flex; gap: 6px; }
+  .ms { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--ink); background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 12px; }
+  .ms.on { background: var(--amber); color: #fff; }
+  .s-note { margin-top: 10px; font-size: 13px; font-weight: 700; color: var(--soft); }
+  .s-note b { color: var(--coral); }
+
+  footer { margin-top: 80px; border-top: 3px dashed var(--ink); padding: 22px 0; display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; color: var(--soft); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="nav">
+      <a class="logo" href="#"><span class="pig">🐷</span> GoalUp</a>
+      <div class="pills">
+        <span class="pill">Как работает</span>
+        <span class="pill">Истории</span>
+        <span class="pill coral">Начать путь</span>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <span class="stamp">копите играючи — по цели на каждом шаге ✨</span>
+    <h1>Твоя копилка <span class="coral-text">считает финиш</span></h1>
+    <p class="lead">Бросай деньги в одну копилку, а GoalUp выкладывает их на дорогу к твоим целям — по очереди, с флажками и оглядкой на дедлайн.</p>
+    <div class="cta-row">
+      <a class="btn coral" href="#">Начать копить 🚀</a>
+      <a class="btn" href="#">Попробовать без регистрации</a>
+    </div>
+  </section>
+
+  <div class="bank-row">
+    <div class="jar">
+      <div class="fill"></div>
+      <div class="coins">🪙🪙</div>
+      <div class="bank-label">копилка полна на 72%</div>
+    </div>
+    <div class="bank-info">
+      <div class="k">Сейчас в копилке</div>
+      <div class="v">216 000 ₽</div>
+      <div class="k" style="margin-top:14px">Всего накоплено за всё время</div>
+      <div class="v" style="font-size:26px;color:var(--green)">216 000 ₽</div>
+      <div class="tags">
+        <span class="tag">🎉 2 цели закрыто</span>
+        <span class="tag">🛟 1 цель в пути</span>
+        <span class="tag">📅 темп: 3 000 ₽/нед</span>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="road-title">Твоя дорога к целям 🗺</h2>
+  <p class="road-sub">Каждая станция — цель. Деньги идут по очереди: первая достёшь — двинется следующая.</p>
+
+  <div class="road">
+    <div class="station">
+      <div class="pin">💻</div>
+      <div class="s-card done">
+        <div class="s-head"><span class="s-name">MacBook Pro</span><span class="flag done">Достигнута 🎉</span></div>
+        <div class="s-amount">96 000 ₽ из 96 000 ₽</div>
+        <div class="bar"><i style="width:100%"></i></div>
+        <div class="milestones">
+          <span class="ms on">★</span><span class="ms on">★</span><span class="ms on">★</span><span class="ms on">★</span>
+        </div>
+        <div class="s-note">Закрыта 12.09.2026 · порядок №1</div>
+      </div>
+    </div>
+
+    <div class="station">
+      <div class="pin">🏖</div>
+      <div class="s-card done">
+        <div class="s-head"><span class="s-name">Отпуск в Грузии</span><span class="flag done">Достигнута 🎉</span></div>
+        <div class="s-amount">120 000 ₽ из 120 000 ₽</div>
+        <div class="bar"><i style="width:100%"></i></div>
+        <div class="milestones">
+          <span class="ms on">★</span><span class="ms on">★</span><span class="ms on">★</span><span class="ms on">★</span>
+        </div>
+        <div class="s-note">Закрыта 15.09.2026 · порядок №2</div>
+      </div>
+    </div>
+
+    <div class="station">
+      <div class="pin">🛟</div>
+      <div class="s-card">
+        <div class="s-head"><span class="s-name">Подушка безопасности</span><span class="flag go">В пути 🚩</span></div>
+        <div class="s-amount">192 000 ₽ из 300 000 ₽</div>
+        <div class="bar"><i style="width:64%"></i></div>
+        <div class="milestones">
+          <span class="ms on">★</span><span class="ms on">★</span><span class="ms on">★</span><span class="ms">☆</span>
+        </div>
+        <div class="s-note">Ещё <b>18 000 ₽</b> · успеваешь к 10.12.2026</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <span>© 2026 GoalUp · Вариант 2 «Путь»</span>
+    <span>Копите по флажкам — по одной станции за раз 🐷</span>
+  </footer>
+</div>
+
+</body>
+</html>

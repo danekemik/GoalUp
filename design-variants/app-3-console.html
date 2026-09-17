@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Приложение · Вариант 3 «Консоль» · GoalUp</title>
+<style>
+  :root {
+    --bg: #0a0f1c; --panel: #101828; --panel-2: #182235; --line: #1f2b3d; --line-soft: rgba(148,163,184,.14);
+    --text: #e6edf7; --muted: #7d8ca3; --accent: #4f8df7; --accent-soft: rgba(79,141,247,.13);
+    --green: #2fd07e; --green-soft: rgba(47,208,126,.12);
+    --amber: #f2a93b; --amber-soft: rgba(242,169,59,.12);
+    --red: #f25b5b; --red-soft: rgba(242,91,91,.12);
+    --radius: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background:
+    radial-gradient(900px 500px at 85% -10%, rgba(79,141,247,.08), transparent), var(--bg);
+    color: var(--text); line-height: 1.5; }
+  .shell { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+  .brand { font-size: 17px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+  .brand b { color: var(--accent); }
+
+  aside { border-right: 1px solid var(--line-soft); padding: 20px 14px; display: flex; flex-direction: column; gap: 2px; }
+  aside .brand { padding: 6px 12px 24px; }
+  .nav { display: flex; align-items: center; gap: 11px; padding: 10px 12px; border-radius: var(--radius); font-size: 13.5px; font-weight: 600; color: var(--muted); cursor: pointer; }
+  .nav:hover { color: var(--text); background: var(--panel); }
+  .nav.on { color: var(--text); background: var(--accent-soft); border: 1px solid rgba(79,141,247,.3); }
+  .foot { margin-top: auto; border-top: 1px solid var(--line-soft); padding-top: 14px; display: flex; gap: 10px; align-items: center; font-size: 13px; }
+  .avatar { width: 32px; height: 32px; border-radius: 6px; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 800; }
+
+  main { padding: 22px 28px 44px; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .topbar h1 { font-size: 22px; font-weight: 800; }
+  .topbar .sub { color: var(--muted); font-size: 12.5px; }
+  .tools { display: flex; gap: 10px; align-items: center; }
+  .seg { display: flex; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 3px; }
+  .seg span { padding: 6px 14px; border-radius: 6px; font-size: 13px; color: var(--muted); cursor: pointer; }
+  .seg span.on { background: var(--accent); color: #fff; font-weight: 600; }
+  .btn { padding: 8px 16px; border-radius: var(--radius); font-size: 13.5px; font-weight: 700; border: 1px solid var(--line); cursor: pointer; }
+  .btn.primary { background: var(--accent); color: #fff; border-color: transparent; }
+  .btn.ghost { background: transparent; color: var(--muted); }
+
+  .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 18px; }
+  .m { background: var(--panel); border: 1px solid var(--line-soft); border-radius: var(--radius); padding: 14px 16px; }
+  .m .k { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+  .m .v { font-size: 24px; font-weight: 800; margin-top: 6px; font-variant-numeric: tabular-nums; }
+  .m .d { font-size: 11.5px; margin-top: 5px; font-weight: 600; }
+  .m .d.up { color: var(--green); } .m .d.warn { color: var(--amber); }
+
+  .body2 { display: grid; grid-template-columns: 1fr 300px; gap: 12px; margin-top: 12px; align-items: start; }
+
+  /* deposit quick */
+  .deposit { background: var(--panel); border: 1px solid var(--line-soft); border-radius: var(--radius); padding: 14px 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+  .deposit .lbl { font-size: 12.5px; color: var(--muted); font-weight: 600; }
+  .deposit input { background: var(--panel-2); border: 1px solid var(--line); color: var(--text); border-radius: var(--radius); padding: 8px 12px; font-size: 13.5px; width: 150px; outline: none; }
+  .deposit .last { color: var(--muted); font-size: 12px; }
+
+  .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tbl th { text-align: left; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; padding: 9px 12px; border-bottom: 1px solid var(--line-soft); }
+  .tbl td { padding: 12px; border-bottom: 1px solid var(--line-soft); vertical-align: middle; }
+  .tbl tr:hover td { background: var(--panel); }
+  .g { display: flex; align-items: center; gap: 10px; }
+  .gi { width: 28px; height: 28px; border-radius: 6px; background: var(--panel-2); display: flex; align-items: center; justify-content: center; }
+  .gn { font-weight: 600; } .gm { color: var(--muted); font-size: 11.5px; }
+  .chip { display: inline-block; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 999px; }
+  .chip.active { color: var(--green); background: var(--green-soft); }
+  .chip.cover { color: var(--amber); background: var(--amber-soft); }
+  .chip.queue { color: var(--accent); background: var(--accent-soft); }
+  .chip.done { color: var(--muted); background: var(--panel-2); }
+  .tbar { width: 84px; height: 5px; border-radius: 99px; background: var(--panel-2); overflow: hidden; display: inline-block; vertical-align: middle; }
+  .tbar i { display: block; height: 100%; background: var(--accent); }
+  .num { font-variant-numeric: tabular-nums; }
+  .act { color: var(--accent); font-weight: 600; white-space: nowrap; }
+
+  .side-col .panel { background: var(--panel); border: 1px solid var(--line-soft); border-radius: var(--radius); padding: 16px; }
+  .side-col h3 { font-size: 13px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .side-col h3 small { font-size: 11px; color: var(--muted); font-weight: 500; }
+  .tx { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 9px 0; border-bottom: 1px solid var(--line-soft); font-size: 12.5px; }
+  .tx:last-child { border-bottom: 0; }
+  .tx .dot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+  .tx .who { display: flex; align-items: center; gap: 8px; }
+  .tx .amt { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .tx .amt.in { color: var(--green); } .tx .amt.out { color: var(--red); }
+  .tx .tm { color: var(--muted); font-size: 11px; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside>
+    <div class="brand">Goal<b>Up</b></div>
+    <div class="nav on">▦ Обзор</div>
+    <div class="nav">◎ Цели</div>
+    <div class="nav">● Кошелёк</div>
+    <div class="nav">📊 Аналитика</div>
+    <div class="nav">🏅 Достижения</div>
+    <div class="nav">⚙ Настройки</div>
+    <div class="foot">
+      <div class="avatar">ПК</div>
+      <div><div style="font-weight:600">Пользователь</div><div style="color:var(--muted);font-size:11.5px">you@example.com</div></div>
+    </div>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <div>
+        <h1>Очередь целей</h1>
+        <div class="sub">сводка на 17.09.2026 · порядок = приоритет · каскад</div>
+      </div>
+      <div class="tools">
+        <div class="seg"><span class="on">Все</span><span>Активные</span><span>Завершённые</span></div>
+        <button class="btn ghost">Новая цель</button>
+      </div>
+    </div>
+
+    <div class="metrics">
+      <div class="m"><div class="k">Кошелёк сейчас</div><div class="v">216 000 ₽</div><div class="d up">▲ 8 000 / 30 дн</div></div>
+      <div class="m"><div class="k">Всего накоплено</div><div class="v">216 000 ₽</div><div class="d" style="color:var(--muted)">2 закрыто</div></div>
+      <div class="m"><div class="k">Активная цель</div><div class="v">1</div><div class="d" style="color:var(--muted)">из 3</div></div>
+      <div class="m"><div class="k">Дедлайн след.</div><div class="v">10.12</div><div class="d warn">успеваешь</div></div>
+    </div>
+
+    <div class="deposit">
+      <span class="lbl">Пополнить кошелёк:</span>
+      <input type="number" placeholder="Сумма, ₽" value="8000">
+      <button class="btn primary">Пополнить</button>
+      <span class="last">последнее пополнение: сегодня, +8 000 ₽</span>
+    </div>
+
+    <div class="body2">
+      <div class="panel" style="overflow:hidden;padding:0">
+        <table class="tbl">
+          <thead><tr><th>#</th><th>Цель</th><th>Статус</th><th>Сумма</th><th>Покрыто</th><th>Прогресс</th><th>Прогноз</th><th></th></tr></thead>
+          <tbody>
+            <tr>
+              <td class="num" style="color:var(--muted)">01</td>
+              <td><div class="g"><span class="gi">🏖</span><div><div class="gn">Отпуск в Грузии</div><div class="gm">порядок №1</div></div></div></td>
+              <td><span class="chip done">завершена</span></td>
+              <td class="num">120 000</td><td class="num">120 000</td>
+              <td><span class="tbar"><i style="width:100%;background:var(--green)"></i></span></td>
+              <td class="num" style="color:var(--muted)">15.09.26</td>
+              <td class="act">Открыть</td>
+            </tr>
+            <tr>
+              <td class="num" style="color:var(--muted)">02</td>
+              <td><div class="g"><span class="gi">💻</span><div><div class="gn">MacBook Pro</div><div class="gm">порядок №2</div></div></div></td>
+              <td><span class="chip done">завершена</span></td>
+              <td class="num">96 000</td><td class="num">96 000</td>
+              <td><span class="tbar"><i style="width:100%;background:var(--green)"></i></span></td>
+              <td class="num" style="color:var(--muted)">12.09.26</td>
+              <td class="act">Открыть</td>
+            </tr>
+            <tr>
+              <td class="num" style="color:var(--muted)">03</td>
+              <td><div class="g"><span class="gi">🛟</span><div><div class="gn">Подушка безопасности</div><div class="gm">порядок №3 · дедлайн 10.12.26</div></div></div></td>
+              <td><span class="chip active">активная</span></td>
+              <td class="num">300 000</td><td class="num">192 000</td>
+              <td><span class="tbar"><i style="width:64%"></i></span></td>
+              <td class="num" style="color:var(--green)">к 10.12</td>
+              <td class="act">Завершить →</td>
+            </tr>
+            <tr>
+              <td class="num" style="color:var(--muted)">04</td>
+              <td><div class="g"><span class="gi">🚗</span><div><div class="gn">Автомобиль</div><div class="gm">порядок №4</div></div></div></td>
+              <td><span class="chip cover">покрыта</span></td>
+              <td class="num">1 800 000</td><td class="num">192 000</td>
+              <td><span class="tbar"><i style="width:11%;background:var(--amber)"></i></span></td>
+              <td class="num" style="color:var(--amber)">&gt; 2 лет</td>
+              <td class="act">Открыть</td>
+            </tr>
+            <tr>
+              <td class="num" style="color:var(--muted)">05</td>
+              <td><div class="g"><span class="gi">🏠</span><div><div class="gn">Первый взнос на квартиру</div><div class="gm">порядок №5</div></div></div></td>
+              <td><span class="chip queue">в очереди</span></td>
+              <td class="num">2 400 000</td><td class="num">0</td>
+              <td><span class="tbar"><i style="width:0%"></i></span></td>
+              <td class="num" style="color:var(--muted)">—</td>
+              <td class="act">Открыть</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="side-col">
+        <div class="panel" style="margin-bottom:12px">
+          <h3>Операции <small>последние</small></h3>
+          <div class="tx"><span class="dot" style="background:var(--green)"></span><span class="who">Пополнение</span><span class="tm">сегодня</span><span class="amt in">+8 000</span></div>
+          <div class="tx"><span class="dot" style="background:var(--red)"></span><span class="who">Снятие</span><span class="tm">вчера</span><span class="amt out">−3 000</span></div>
+          <div class="tx"><span class="dot" style="background:var(--accent)"></span><span class="who">Завершение · Отпуск</span><span class="tm">15.09</span><span class="amt out">−120 000</span></div>
+          <div class="tx"><span class="dot" style="background:var(--accent)"></span><span class="who">Завершение · MacBook</span><span class="tm">12.09</span><span class="amt out">−96 000</span></div>
+        </div>
+        <div class="panel">
+          <h3>Распределение каскада</h3>
+          <div style="font-size:12.5px;color:var(--muted);margin-top:6px">Свободный остаток 108 000 ₽ идёт на активную цель <b style="color:var(--text)">Подушка безопасности</b>.</div>
+          <div style="font-size:12.5px;color:var(--green);font-weight:600;margin-top:10px">Прогноз: сбор до 10.12.2026</div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+</body>
+</html>

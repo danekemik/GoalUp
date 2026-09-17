@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Вариант 3 — «Terminal» · GoalUp</title>
+<style>
+  :root {
+    --bg: #0b1220;
+    --panel: #111a2e;
+    --panel-2: #16213a;
+    --line: rgba(148, 163, 184, .14);
+    --text: #e6edf7;
+    --muted: #8494ae;
+    --accent: #3b82f6;
+    --accent-soft: rgba(59,130,246,.14);
+    --green: #22c55e;
+    --green-soft: rgba(34,197,94,.12);
+    --amber: #f59e0b;
+    --amber-soft: rgba(245,158,11,.12);
+    --red: #ef4444;
+    --red-soft: rgba(239,68,68,.12);
+    --radius: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-font-smoothing: antialiased; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background:
+      radial-gradient(900px 500px at 80% -10%, rgba(59,130,246,.09), transparent),
+      var(--bg);
+    color: var(--text); line-height: 1.5;
+  }
+  .brand { font-size: 18px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+  .brand b { color: var(--accent); }
+
+  /* ---------- Shell ---------- */
+  .shell { display: grid; grid-template-columns: 236px 1fr; min-height: 100vh; }
+  aside {
+    border-right: 1px solid var(--line); padding: 22px 16px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  aside .brand { padding: 6px 12px 24px; }
+  .nav-item {
+    display: flex; align-items: center; gap: 12px; padding: 11px 12px;
+    border-radius: var(--radius); font-size: 14px; font-weight: 500; color: var(--muted);
+    border: 1px solid transparent;
+  }
+  .nav-item .ico { width: 18px; text-align: center; }
+  .nav-item:hover { color: var(--text); background: var(--panel); }
+  .nav-item.active { color: var(--text); background: var(--accent-soft); border-color: rgba(59,130,246,.35); }
+  .side-foot { margin-top: auto; border-top: 1px solid var(--line); padding-top: 16px; display: flex; gap: 10px; align-items: center; }
+  .avatar { width: 34px; height: 34px; border-radius: 8px; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; }
+
+  .main { padding: 24px 32px 40px; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+  .search {
+    display: flex; align-items: center; gap: 10px; background: var(--panel);
+    border: 1px solid var(--line); border-radius: var(--radius); padding: 9px 14px; width: 300px;
+  }
+  .search input { background: transparent; border: 0; outline: 0; color: var(--text); font-size: 13.5px; width: 100%; }
+  .search input::placeholder { color: var(--muted); }
+  .hud { display: flex; gap: 10px; align-items: center; }
+  .hud .date { font-size: 13px; color: var(--muted); }
+
+  h1.title { font-size: 26px; font-weight: 800; letter-spacing: -.01em; }
+  .sub { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+  /* ---------- Metrics ---------- */
+  .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 22px; }
+  .metric { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
+  .metric .l { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+  .metric .v { font-size: 28px; font-weight: 800; margin-top: 8px; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+  .metric .d { display: inline-flex; align-items: center; gap: 5px; margin-top: 10px; font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 999px; }
+  .d.up { color: var(--green); background: var(--green-soft); }
+  .d.neutral { color: var(--muted); background: var(--panel-2); }
+
+  /* ---------- Grid: chart + history ---------- */
+  .grid { display: grid; grid-template-columns: 1.7fr 1fr; gap: 14px; margin-top: 14px; }
+  .panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; }
+  .panel h3 { font-size: 14px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
+  .panel h3 small { font-size: 11.5px; color: var(--muted); font-weight: 500; }
+  .chart { display: flex; align-items: flex-end; gap: 7px; height: 150px; margin-top: 18px; }
+  .chart .col {
+    flex: 1; background: linear-gradient(180deg, var(--accent), rgba(59,130,246,.25));
+    border-radius: 3px 3px 0 0; min-height: 6px; position: relative;
+  }
+  .chart .col .hint {
+    position: absolute; top: -26px; left: 50%; transform: translateX(-50%);
+    font-size: 10.5px; color: var(--muted); white-space: nowrap; opacity: 0; transition: opacity .12s;
+  }
+  .chart .col:hover .hint { opacity: 1; }
+
+  .tx { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 13.5px; }
+  .tx:last-child { border-bottom: 0; }
+  .tx .who { display: flex; align-items: center; gap: 10px; }
+  .tx .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .tx .m { color: var(--muted); font-size: 12px; }
+  .tx .amt { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .tx .amt.in { color: var(--green); }
+  .tx .amt.out { color: var(--red); }
+
+  /* ---------- Table ---------- */
+  .table-card { margin-top: 14px; overflow: hidden; }
+  .table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .table th { text-align: left; color: var(--muted); font-size: 11.5px; text-transform: uppercase; letter-spacing: .05em; padding: 12px 16px; border-bottom: 1px solid var(--line); font-weight: 600; }
+  .table td { padding: 13px 16px; border-bottom: 1px solid var(--line); }
+  .table tr:last-child td { border-bottom: 0; }
+  .table tr:hover td { background: var(--panel-2); }
+  .g-name { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+  .g-ico { width: 30px; height: 30px; border-radius: 6px; background: var(--panel-2); display: flex; align-items: center; justify-content: center; font-size: 15px; }
+  .chip { display: inline-block; font-size: 11.5px; font-weight: 700; padding: 3px 10px; border-radius: 999px; }
+  .chip.green { color: var(--green); background: var(--green-soft); }
+  .chip.amber { color: var(--amber); background: var(--amber-soft); }
+  .chip.blue { color: var(--accent); background: var(--accent-soft); }
+  .num { font-variant-numeric: tabular-nums; }
+  .mini { display: flex; align-items: center; gap: 10px; }
+  .mini .track { flex: 1; height: 6px; border-radius: 99px; background: var(--panel-2); overflow: hidden; }
+  .mini .track i { display: block; height: 100%; background: var(--accent); }
+  .action { color: var(--accent); font-weight: 600; cursor: pointer; }
+  .action:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside>
+    <div class="brand">Goal<b>Up</b></div>
+    <div class="nav-item active"><span class="ico">▦</span> Обзор</div>
+    <div class="nav-item"><span class="ico">●</span> Кошелёк</div>
+    <div class="nav-item"><span class="ico">◎</span> Цели</div>
+    <div class="nav-item"><span class="ico">📊</span> Аналитика</div>
+    <div class="nav-item"><span class="ico">🏅</span> Достижения</div>
+    <div class="nav-item"><span class="ico">⚙</span> Настройки</div>
+    <div class="side-foot">
+      <div class="avatar">ПК</div>
+      <div style="font-size:13px">
+        <div style="font-weight:600">Пользователь</div>
+        <div style="color:var(--muted);font-size:11.5px">you@example.com</div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h1 class="title">Обзор</h1>
+        <div class="sub">17 сентября 2026 · 4 цели, 3 активных</div>
+      </div>
+      <div class="hud">
+        <div class="search">⌕ <input placeholder="Найти цель или операцию…"></div>
+        <span class="date">Export ⤓</span>
+      </div>
+    </div>
+
+    <div class="metrics">
+      <div class="metric">
+        <div class="l">Сейчас в кошельке</div>
+        <div class="v">216 000 ₽</div>
+        <span class="d up">▲ +8 000 / 30 дн</span>
+      </div>
+      <div class="metric">
+        <div class="l">Всего накоплено</div>
+        <div class="v">216 000 ₽</div>
+        <span class="d neutral">2 цели закрыто</span>
+      </div>
+      <div class="metric">
+        <div class="l">Активных целей</div>
+        <div class="v">1</div>
+        <span class="d neutral">в очереди из 3</span>
+      </div>
+      <div class="metric">
+        <div class="l">Ближайший дедлайн</div>
+        <div class="v">10.12</div>
+        <span class="d up">успеваешь</span>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="panel">
+        <h3>Динамика баланса <small>30 дней · ₽</small></h3>
+        <div class="chart" id="chart"></div>
+      </div>
+      <div class="panel">
+        <h3>Последние операции</h3>
+        <div class="tx"><span class="who"><span class="dot" style="background:var(--green)"></span>Пополнение<b>+</b></span><span class="m">сегодня</span><span class="amt in">+8 000 ₽</span></div>
+        <div class="tx"><span class="who"><span class="dot" style="background:var(--red)"></span>Снятие</span><span class="m">вчера</span><span class="amt out">−3 000 ₽</span></div>
+        <div class="tx"><span class="who"><span class="dot" style="background:var(--accent)"></span>Завершение: Отпуск</span><span class="m">15.09</span><span class="amt out">−120 000 ₽</span></div>
+        <div class="tx"><span class="who"><span class="dot" style="background:var(--accent)"></span>Завершение: MacBook</span><span class="m">12.09</span><span class="amt out">−96 000 ₽</span></div>
+        <div class="tx"><span class="who"><span class="dot" style="background:var(--green)"></span>Пополнение</span><span class="m">12.09</span><span class="amt in">+20 000 ₽</span></div>
+      </div>
+    </div>
+
+    <div class="panel table-card">
+      <h3 style="margin-bottom:6px">Цели <small>очередь по приоритету</small></h3>
+      <table class="table">
+        <thead><tr><th>Цель</th><th>Статус</th><th>Сумма</th><th>Покрыто</th><th>%</th><th></th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="g-name"><span class="g-ico">💻</span>MacBook Pro</span></td>
+            <td><span class="chip green">достигнута</span></td>
+            <td class="num">96 000 ₽</td><td class="num">96 000 ₽</td><td class="num">100%</td>
+            <td class="action">Открыть</td>
+          </tr>
+          <tr>
+            <td><span class="g-name"><span class="g-ico">🏖</span>Отпуск в Грузии</span></td>
+            <td><span class="chip green">достигнута</span></td>
+            <td class="num">120 000 ₽</td><td class="num">120 000 ₽</td><td class="num">100%</td>
+            <td class="action">Открыть</td>
+          </tr>
+          <tr>
+            <td><span class="g-name"><span class="g-ico">🛟</span>Подушка безопасности</span></td>
+            <td><span class="chip amber">в работе</span></td>
+            <td class="num">300 000 ₽</td><td class="num">192 000 ₽</td><td class="num">64%</td>
+            <td class="action">Завершить</td>
+          </tr>
+          <tr>
+            <td><span class="g-name"><span class="g-ico">🚗</span>Автомобиль</span></td>
+            <td><span class="chip blue">в очереди</span></td>
+            <td class="num">1 800 000 ₽</td><td class="num">0 ₽</td><td class="num">0%</td>
+            <td class="action">Открыть</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<script>
+  const data = [18, 22, 21, 26, 25, 30, 28, 34, 36, 33, 38, 40, 37, 42, 45, 44, 48, 50, 47, 52, 55, 54, 57, 60, 58, 62, 64, 63, 66, 68];
+  const min = Math.min(...data), max = Math.max(...data);
+  const chart = document.getElementById("chart");
+  for (const v of data) {
+    const h = 8 + Math.round(((v - min) / (max - min)) * 142);
+    const col = document.createElement("div");
+    col.className = "col";
+    col.style.height = h + "px";
+    col.innerHTML = `<span class="hint">${v * 1000} ₽</span>`;
+    chart.appendChild(col);
+  }
+</script>
+
+</body>
+</html>

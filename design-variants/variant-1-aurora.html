@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Вариант 1 — «Aurora» · GoalUp</title>
+<style>
+  :root {
+    --bg: #f6f8fc;
+    --surface: #ffffff;
+    --ink: #0f172a;
+    --muted: #64748b;
+    --line: #e2e8f0;
+    --brand: #2563eb;
+    --brand-soft: #eff6ff;
+    --success: #059669;
+    --radius: 18px;
+    --shadow: 0 12px 32px -12px rgba(15, 23, 42, .12);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  a { color: inherit; text-decoration: none; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---------- Header ---------- */
+  header {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(246, 248, 252, .85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+  .logo { font-size: 20px; font-weight: 800; letter-spacing: -.02em; }
+  .logo span { color: var(--brand); }
+  .nav-links { display: flex; gap: 28px; font-size: 14.5px; }
+  .nav-links a { color: var(--muted); font-weight: 500; }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-actions { display: flex; gap: 12px; align-items: center; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    height: 42px; padding: 0 20px; border-radius: 999px;
+    font-size: 14.5px; font-weight: 600; border: 1px solid transparent;
+    cursor: pointer; transition: transform .12s ease, box-shadow .12s ease;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn-primary { background: var(--brand); color: #fff; box-shadow: 0 10px 22px -10px rgba(37,99,235,.55); }
+  .btn-ghost { background: transparent; color: var(--muted); }
+  .btn-ghost:hover { color: var(--ink); background: var(--surface); }
+  .btn-outline { border-color: var(--line); background: var(--surface); color: var(--ink); }
+  .btn-sm { height: 34px; padding: 0 14px; font-size: 13px; }
+
+  /* ---------- Hero ---------- */
+  .hero { display: grid; grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: center; padding: 72px 0 64px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--surface); border: 1px solid var(--line);
+    padding: 6px 12px; border-radius: 999px; font-size: 12.5px; font-weight: 500; color: var(--muted);
+  }
+  .chip b { color: var(--success); }
+  h1 { font-size: 52px; line-height: 1.08; letter-spacing: -.03em; font-weight: 800; margin: 20px 0 18px; }
+  h1 em { font-style: normal; color: var(--brand); }
+  .lead { font-size: 18px; color: var(--muted); max-width: 520px; }
+  .hero-cta { display: flex; gap: 14px; margin-top: 30px; }
+  .bullet { display: flex; gap: 8px; margin-left: 26px; margin-top: 26px; align-items: center; }
+
+  /* ---------- Preview card (right) ---------- */
+  .preview {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 26px;
+    box-shadow: var(--shadow); padding: 26px; position: relative;
+  }
+  .preview::before {
+    content: ""; position: absolute; inset: -1px; border-radius: 26px;
+    background: linear-gradient(140deg, rgba(37,99,235,.18), transparent 40%);
+    pointer-events: none;
+  }
+  .pv-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .pv-label { font-size: 13px; color: var(--muted); }
+  .pv-balance { font-size: 34px; font-weight: 800; letter-spacing: -.02em; margin-top: 2px; }
+  .pv-delta { display: inline-flex; gap: 6px; font-size: 12.5px; color: var(--success); font-weight: 600; background: #ecfdf5; border-radius: 999px; padding: 4px 10px; }
+  .pv-divider { height: 1px; background: var(--line); margin: 20px 0; }
+  .goal { display: flex; flex-direction: column; gap: 8px; padding: 14px 0; }
+  .goal-top { display: flex; justify-content: space-between; font-size: 14px; }
+  .goal-name { font-weight: 600; }
+  .goal-right { color: var(--muted); font-size: 13px; }
+  .bar { height: 8px; border-radius: 999px; background: var(--line); overflow: hidden; }
+  .bar i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--brand), #60a5fa); }
+  .goal.filled .bar i { background: var(--success); }
+  .badge { font-size: 11.5px; font-weight: 700; color: var(--success); background: #ecfdf5; padding: 3px 9px; border-radius: 999px; }
+  .pv-actions { display: flex; gap: 10px; margin-top: 18px; }
+  .pv-actions .btn-primary { flex: 1; }
+
+  /* ---------- Features ---------- */
+  section.block { padding: 56px 0; }
+  .sec-title { text-align: center; font-size: 32px; font-weight: 800; letter-spacing: -.02em; }
+  .sec-sub { text-align: center; color: var(--muted); margin-top: 10px; }
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-top: 40px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 26px; transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+  .card .ic { width: 44px; height: 44px; border-radius: 14px; background: var(--brand-soft); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .card h3 { margin-top: 16px; font-size: 17px; }
+  .card p { margin-top: 6px; font-size: 14px; color: var(--muted); }
+
+  /* ---------- Steps ---------- */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 44px; position: relative; }
+  .step { text-align: center; padding: 0 18px; position: relative; }
+  .step:not(:last-child)::after {
+    content: ""; position: absolute; top: 24px; width: 100%; left: 50%; height: 2px;
+    background: repeating-linear-gradient(90deg, var(--line) 0 8px, transparent 8px 16px);
+  }
+  .step .num { width: 48px; height: 48px; margin: 0 auto; border-radius: 50%; background: var(--ink); color: #fff; font-weight: 700; display: flex; align-items: center; justify-content: center; font-size: 17px; }
+  .step h3 { margin-top: 16px; font-size: 16px; }
+  .step p { margin-top: 6px; font-size: 13.5px; color: var(--muted); }
+
+  /* ---------- CTA ---------- */
+  .cta {
+    background: linear-gradient(120deg, #1d4ed8, #2563eb 55%, #4f46e5);
+    border-radius: 26px; color: #fff; text-align: center; padding: 64px 32px;
+    margin: 40px 0;
+  }
+  .cta h2 { font-size: 34px; letter-spacing: -.02em; }
+  .cta p { margin: 12px auto 26px; max-width: 460px; color: #c7d7ff; }
+  .btn-white { background: #fff; color: #1d4ed8; }
+
+  footer { border-top: 1px solid var(--line); padding: 28px 0; font-size: 13px; color: var(--muted); }
+  .foot { display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="#">Goal<span>Up</span></a>
+    <nav class="nav-links">
+      <a href="#">Как это работает</a>
+      <a href="#">Возможности</a>
+      <a href="#">Отзывы</a>
+    </nav>
+    <div class="nav-actions">
+      <a class="btn btn-ghost btn-sm" href="#">Войти</a>
+      <a class="btn btn-primary btn-sm" href="#">Начать бесплатно</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <section class="hero">
+    <div>
+      <span class="chip">goal-oriented finance · <b>бесплатно для старта</b></span>
+      <h1>Копите в одном месте. <em>Закрывайте</em> цель за целью.</h1>
+      <p class="lead">Общий кошелёк и приоритетная очередь: пока не накопите на главное, следующая цель ждёт. Прямо сейчас — сколько уже есть и что делать дальше.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#">Создать кошелёк →</a>
+        <a class="btn btn-outline" href="#">Посмотреть, как работает</a>
+      </div>
+      <div class="bullet">
+        <span style="color:var(--success);font-weight:700">✓</span>
+        <span style="font-size:14px;color:var(--muted)">216 000 ₽ уже накоплено · 2 цели закрыто · 1 в работе</span>
+      </div>
+    </div>
+
+    <div class="preview">
+      <div class="pv-head">
+        <div>
+          <div class="pv-label">Сейчас в кошельке</div>
+          <div class="pv-balance">216 000 ₽</div>
+        </div>
+        <span class="pv-delta">▲ +8 000 за 30 дней</span>
+      </div>
+      <div class="pv-divider"></div>
+
+      <div class="goal filled">
+        <div class="goal-top"><span class="goal-name">💻 MacBook Pro</span><span><b class="badge">Достигнута</b></span></div>
+        <div class="bar"><i style="width:100%"></i></div>
+        <div class="goal-right">96 000 ₽ из 96 000 ₽</div>
+      </div>
+      <div class="goal filled">
+        <div class="goal-top"><span class="goal-name">🏖 Отпуск в Грузии</span><span class="badge">Достигнута</span></div>
+        <div class="bar"><i style="width:100%"></i></div>
+        <div class="goal-right">120 000 ₽ из 120 000 ₽</div>
+      </div>
+      <div class="goal">
+        <div class="goal-top"><span class="goal-name">🛟 Подушка безопасности <b style="color:var(--brand);font-size:11px">(активная)</b></span><span class="goal-right">64%</span></div>
+        <div class="bar"><i style="width:64%"></i></div>
+        <div class="goal-right">осталось 18 000 ₽ · темп 3 000 ₽/нед</div>
+      </div>
+
+      <div class="pv-actions">
+        <button class="btn btn-primary">Достигнута 🎉</button>
+        <button class="btn btn-outline">＋ Пополнить</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="sec-title">Один кошелёк вместо десяти «банков»</h2>
+    <p class="sec-sub">Меньше ввода, понятнее прогресс, честный прогноз.</p>
+    <div class="cards">
+      <div class="card">
+        <div class="ic">🪙</div>
+        <h3>Ручное пополнение</h3>
+        <p>Вносите сумму, когда удобно. Никаких банков и интеграций — всё под контролем.</p>
+      </div>
+      <div class="card">
+        <div class="ic">🪜</div>
+        <h3>Приоритетная очередь</h3>
+        <p>Деньги по очереди закрывают цели: сначала главную, потом следующую.</p>
+      </div>
+      <div class="card">
+        <div class="ic">🎯</div>
+        <h3>Честный прогноз</h3>
+        <p>Темп, который нужен, и дата, когда цель реально будет достигнута.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <h2 class="sec-title">Как это работает</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="num">1</div>
+        <h3>Пополняете кошелёк</h3>
+        <p>Одна работающая сумма, без микроменеджмента по целям.</p>
+      </div>
+      <div class="step">
+        <div class="num">2</div>
+        <h3>Закрываете первую цель</h3>
+        <p>При 100% появляется кнопка «Достигнута» — завершение только вручную.</p>
+      </div>
+      <div class="step">
+        <div class="num">3</div>
+        <h3>Очередь двигается</h3>
+        <p>Сумма цели списывается, остаток переходит следующей цели.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <h2>Начните с первой цели за минуту</h2>
+    <p>Проверьте прогноз по своим цифрам. Бесплатно, без привязки к банку.</p>
+    <a class="btn btn-white" href="#">Создать кошелёк →</a>
+  </section>
+</div>
+
+<footer>
+  <div class="wrap foot">
+    <span>© 2026 GoalUp · Вариант 1 «Aurora»</span>
+    <span>Копите на важное — по одной цели за раз.</span>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoalUp · Концепт по DESIGN_DESCRIPTION.md</title>
+<style>
+  :root {
+    --canvas: #e9ebf1; --appbg: #f6f7fb; --surface: #fff;
+    --line: #eceef3; --ink: #1a2030; --muted: #8a92a6; --muted2: #6b7490;
+    --violet: #7c3aed; --violet2: #8b5cf6; --violets: linear-gradient(135deg,#7c3aed,#8b5cf6);
+    --violetsf: rgba(124,58,237,.09);
+    --green: #16a34a; --greensf: rgba(22,163,74,.1); --red: #dc2626; --orange: #ea7228; --orangesf: rgba(234,114,40,.12);
+    --radius: 14px;
+    --shadow: 0 1px 2px rgba(20,26,46,.05), 0 14px 30px -20px rgba(28,36,64,.25);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--canvas); color: var(--ink); -webkit-font-smoothing: antialiased; }
+
+  /* ---------- Presentation canvas ---------- */
+  .head { padding: 26px 32px 8px; }
+  .head h1 { font-size: 22px; font-weight: 800; letter-spacing: -.01em; }
+  .head p { color: var(--muted2); font-size: 13px; margin-top: 4px; }
+  .canvas { padding: 22px 28px 48px; display: grid; grid-template-columns: minmax(0,1fr) 330px; gap: 22px; align-items: start; }
+
+  .frame { background: var(--surface); border: 1px solid #dfe2ea; border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; margin-bottom: 22px; }
+  .frame-bar { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-bottom: 1px solid var(--line); background: #fafbfd; }
+  .bar-dots { display: flex; gap: 6px; }
+  .bar-dots i { width: 10px; height: 10px; border-radius: 50%; display: block; }
+  .bar-dots i:nth-child(1){background:#f66}.bar-dots i:nth-child(2){background:#fc0}.bar-dots i:nth-child(3){background:#3d6}
+  .bar-label { font-size: 12px; color: var(--muted2); margin-left: 10px; font-weight: 600; }
+  .app { background: var(--appbg); }
+
+  /* ---------- Shared UI ---------- */
+  .btn-primary { background: var(--violets); color: #fff; border: 0; border-radius: 10px; height: 38px; padding: 0 16px; font-size: 13.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; box-shadow: 0 10px 18px -10px rgba(124,58,237,.7); }
+  .btn-primary.sm { height: 32px; font-size: 12.5px; padding: 0 12px; border-radius: 8px; }
+  .btn-ghost { background: transparent; border: 1px solid var(--line); color: var(--muted2); border-radius: 10px; height: 38px; padding: 0 14px; font-size: 13.5px; font-weight: 600; cursor: pointer; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 1px 2px rgba(20,26,46,.03); }
+  .grad-text { font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 999px; }
+  .tg { color: var(--green); background: var(--greensf); }
+  .to { color: var(--orange); background: var(--orangesf); }
+  .tv { color: var(--violet); background: var(--violetsf); }
+
+  /* ---------- Desktop dashboard ---------- */
+  .dash { display: grid; grid-template-columns: 176px 1fr; min-height: 620px; }
+  .sd { border-right: 1px solid var(--line); background: var(--surface); padding: 18px 12px; display: flex; flex-direction: column; }
+  .logo { display: flex; align-items: center; gap: 9px; padding: 2px 10px 20px; font-weight: 800; font-size: 16.5px; letter-spacing: -.01em; }
+  .logo svg { flex: none; }
+  .sd .item { display: flex; align-items: center; gap: 10px; padding: 9px 11px; border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--muted2); margin-bottom: 3px; }
+  .sd .item svg { flex: none; }
+  .sd .item.on { background: var(--violetsf); color: var(--violet); }
+  .user { margin-top: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px; display: flex; align-items: center; gap: 9px; }
+  .user .ava { width: 34px; height: 34px; border-radius: 50%; background: var(--violets); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; }
+  .user .nm { font-size: 13px; font-weight: 700; }
+  .user .em { font-size: 11px; color: var(--muted); }
+  .user .ar { margin-left: auto; color: var(--muted); }
+
+  .main { padding: 20px 24px; }
+  .hrow { display: flex; align-items: center; justify-content: space-between; }
+  .hrow .crumbs { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .hrow .act { display: flex; align-items: center; gap: 14px; }
+  .bell { position: relative; width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); display: flex; align-items: center; justify-content: center; }
+  .bell .dot { position: absolute; top: 8px; right: 9px; width: 7px; height: 7px; border-radius: 50%; background: var(--red); }
+  .hello { margin-top: 18px; font-size: 23px; font-weight: 800; letter-spacing: -.01em; }
+  .hello-sub { color: var(--muted2); font-size: 13px; margin-top: 3px; }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 20px; }
+  .stat { padding: 16px 18px; }
+  .stat .k { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .stat .v { font-size: 24px; font-weight: 800; margin-top: 6px; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+  .stat .d { font-size: 12px; font-weight: 700; margin-top: 6px; }
+  .stat .d.up { color: var(--green); }
+  .stat .d.mut { color: var(--muted); font-weight: 600; }
+  .stat .lnk { color: var(--violet); font-weight: 700; font-size: 12.5px; }
+
+  .sec { display: flex; align-items: center; justify-content: space-between; margin: 22px 0 12px; }
+  .sec h2 { font-size: 16px; font-weight: 800; }
+  .sec .more { color: var(--violet); font-size: 13px; font-weight: 700; }
+
+  .goals { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .goal { padding: 16px; }
+  .g-ico { width: 40px; height: 40px; border-radius: 12px; background: var(--appbg); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .g-name { font-size: 14px; font-weight: 700; margin-top: 12px; }
+  .g-amt { font-size: 13px; color: var(--muted2); margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .g-amt b { color: var(--ink); }
+  .bar { height: 8px; border-radius: 99px; background: var(--appbg); margin-top: 12px; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--violets); border-radius: inherit; }
+  .g-pc { font-size: 13px; font-weight: 800; margin-top: 7px; }
+  .g-rest { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .g-fc { margin-top: 10px; font-size: 12px; color: var(--muted2); }
+  .g-fc b { color: var(--ink); }
+
+  /* ---------- Desktop: goal detail + ops row ---------- */
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+
+  .gd { padding: 0 20px 22px; display: grid; grid-template-columns: 190px 1fr; gap: 20px; min-height: 400px; }
+  .gd .back { grid-column: 1 / -1; padding-top: 16px; font-size: 13px; font-weight: 600; color: var(--muted2); }
+  .gd .back svg { vertical-align: -2px; }
+  .g-img { background: var(--appbg); border: 1px solid var(--line); border-radius: var(--radius); height: 130px; display: flex; align-items: center; justify-content: center; font-size: 56px; }
+  .params { margin-top: 14px; display: flex; flex-direction: column; gap: 7px; font-size: 12.5px; }
+  .params .row { display: flex; justify-content: space-between; gap: 8px; }
+  .params .k { color: var(--muted); }
+  .params .v { font-weight: 700; }
+  .prg { margin-top: 14px; }
+  .prg .head { display: flex; justify-content: space-between; align-items: center; padding: 0; }
+  .prg .head .pct { font-size: 22px; font-weight: 800; }
+  .prg .head .amt { font-size: 13px; color: var(--muted2); }
+  .bar.big { height: 14px; margin-top: 10px; }
+  .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+  .kpi { padding: 12px; }
+  .kpi .k { font-size: 11px; color: var(--muted); font-weight: 600; }
+  .kpi .v { font-size: 15px; font-weight: 800; margin-top: 4px; }
+  .kpi .v.green { color: var(--green); }
+  .pace { padding: 14px 16px; }
+  .pace .ttl { font-size: 13px; font-weight: 800; margin-bottom: 10px; }
+  .pace .cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .pace .c { font-size: 15px; font-weight: 800; }
+  .pace .s { font-size: 11px; color: var(--muted); }
+  .therest { padding: 14px 16px; margin-top: 12px; }
+  .therest .ttl { font-size: 13px; font-weight: 800; }
+  .therest .cur { display: flex; align-items: baseline; gap: 6px; margin-top: 10px; }
+  .therest .cur b { font-size: 20px; font-weight: 800; }
+  .therest .cur span { color: var(--muted2); font-size: 12.5px; }
+  input[type=range] { width: 100%; margin-top: 12px; accent-color: var(--violet); height: 24px; }
+  .scale { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); }
+  .result { margin-top: 12px; background: var(--violetsf); border-radius: 10px; padding: 12px 14px; }
+  .result .lbl { font-size: 11px; color: var(--violet); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+  .result .line { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+  .result .date { font-size: 17px; font-weight: 800; }
+  .result .win { font-size: 12.5px; color: var(--green); font-weight: 700; }
+
+  /* Ops */
+  .ops { padding: 0 20px 18px; }
+  .tabs { display: flex; gap: 4px; margin: 14px 0 12px; border-bottom: 1px solid var(--line); }
+  .tab { padding: 8px 14px; font-size: 13px; font-weight: 700; color: var(--muted2); border-bottom: 2px solid transparent; margin-bottom: -1px; cursor: pointer; }
+  .tab.on { color: var(--violet); border-color: var(--violet); }
+  .ops .rt { display: flex; justify-content: flex-end; align-items: center; margin-bottom: 10px; }
+  table.ops-t { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .ops-t th { text-align: left; color: var(--muted); font-weight: 600; font-size: 11px; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+  .ops-t td { padding: 11px 10px; border-bottom: 1px solid var(--line); }
+  .ops-t tr:last-child td { border-bottom: 0; }
+  .amt { font-weight: 800; font-variant-numeric: tabular-nums; }
+  .amt.in { color: var(--green); } .amt.out { color: var(--red); }
+
+  /* Stats screen */
+  .stts { padding: 0 20px 20px; }
+  .stts .top { display: flex; align-items: center; justify-content: space-between; padding: 16px 0 0; }
+  .sel { border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; font-size: 12.5px; color: var(--muted2); background: var(--surface); display: inline-flex; align-items: center; gap: 8px; }
+  .st-kpis { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-top: 16px; }
+  .st-card { padding: 16px; }
+  .st-card .k { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .st-card .v { font-size: 22px; font-weight: 800; margin-top: 6px; }
+  .st-card .v b { color: var(--violet); }
+  .charts { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 12px; margin-top: 12px; }
+  .ch td { font-size: 12.5px; padding: 5px 0; color: var(--muted2); }
+  .ch h4 { font-size: 13.5px; font-weight: 800; margin-bottom: 6px; }
+  .legend { display: flex; gap: 12px; margin-top: 8px; font-size: 11.5px; color: var(--muted2); flex-wrap: wrap; }
+  .legend i { width: 9px; height: 9px; border-radius: 3px; display: inline-block; margin-right: 5px; vertical-align: -1px; }
+
+  /* ---------- Phones ---------- */
+  .phone { width: 300px; margin: 0 auto; background: #fff; border: 9px solid #1c2333; border-radius: 38px; overflow: hidden; box-shadow: var(--shadow); }
+  .phone .notch { display: flex; justify-content: space-between; align-items: center; padding: 8px 14px 6px; font-size: 11px; font-weight: 700; }
+  .phone .notch .t { color: var(--muted2); }
+  .phone .scr { background: var(--appbg); min-height: 560px; position: relative; padding-bottom: 72px; }
+  .p-top { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; }
+  .p-title { font-size: 15px; font-weight: 800; }
+  .sum { background: var(--violets); color: #fff; border-radius: 18px; margin: 8px 14px 0; padding: 18px; position: relative; overflow: hidden; }
+  .sum .k { font-size: 12px; opacity: .85; }
+  .sum .v { font-size: 30px; font-weight: 800; margin-top: 6px; }
+  .sum .delta { font-size: 12px; font-weight: 700; margin-top: 4px; opacity: .95; }
+  .sum svg { position: absolute; right: 14px; bottom: 14px; }
+  .p-sec { display: flex; justify-content: space-between; align-items: center; padding: 16px 16px 8px; font-size: 15px; font-weight: 800; }
+  .plus { width: 30px; height: 30px; border-radius: 9px; background: var(--violets); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 8px 14px -8px rgba(124,58,237,.8); }
+  .p-goal { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; margin: 0 14px 9px; display: flex; align-items: center; gap: 12px; }
+  .p-goal .i { width: 36px; height: 36px; border-radius: 10px; background: var(--appbg); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; font-size: 18px; flex: none; }
+  .p-goal .n { font-size: 13px; font-weight: 700; }
+  .p-goal .s { font-size: 11px; color: var(--muted); }
+  .p-goal .pc { margin-left: auto; font-weight: 800; font-size: 13px; }
+  .p-goal .mini-bar { position: absolute; }
+  .pnv { position: absolute; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid var(--line); display: flex; justify-content: space-around; padding: 9px 4px 12px; }
+  .pnv .it { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 9.5px; color: var(--muted); font-weight: 600; }
+  .pnv .it.on { color: var(--violet); }
+
+  /* mobile goal */
+  .p-hero { height: 130px; background: var(--appbg); border: 1px solid var(--line); margin: 4px 14px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 52px; }
+  .p-progbox { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); margin: 0 14px 10px; padding: 14px; }
+  .p-progbox .row { display: flex; justify-content: space-between; align-items: baseline; }
+  .p-progbox .pct { font-size: 22px; font-weight: 800; }
+  .p-progbox .amt { font-size: 12.5px; color: var(--muted2); }
+  .p-rows { margin: 0 14px; }
+  .p-row { display: flex; justify-content: space-between; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 11px 14px; font-size: 13px; margin-bottom: 8px; }
+  .p-row .k { color: var(--muted); } .p-row .v { font-weight: 700; }
+  .p-row .v.green { color: var(--green); }
+  .p-what { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); margin: 0 14px; padding: 14px; }
+  .p-what .n { font-size: 12.5px; color: var(--muted2); }
+  .p-what .d { font-size: 17px; font-weight: 800; margin-top: 4px; }
+  .p-what .win { color: var(--green); font-size: 12px; font-weight: 700; margin-top: 4px; }
+  .cta-mobile { position: absolute; bottom: 76px; left: 14px; right: 14px; }
+
+  /* ---------- Modal ---------- */
+  .modal-ov { position: fixed; inset: 0; background: rgba(24,30,50,.45); display: flex; align-items: center; justify-content: center; z-index: 10; transition: opacity .18s; }
+  .modal-ov.hidden { opacity: 0; pointer-events: none; }
+  .modal { width: 380px; background: #fff; border-radius: 18px; box-shadow: 0 40px 80px -30px rgba(15,20,40,.5); padding: 20px; }
+  .m-head { display: flex; justify-content: space-between; align-items: center; font-size: 16px; font-weight: 800; }
+  .m-x { width: 30px; height: 30px; border-radius: 9px; border: 0; background: var(--appbg); color: var(--muted2); cursor: pointer; font-size: 14px; }
+  .seg2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; }
+  .seg2 button { border: 1px solid var(--line); background: #fff; border-radius: 10px; height: 40px; font-size: 13.5px; font-weight: 700; color: var(--muted2); cursor: pointer; }
+  .seg2 button.on { background: var(--violets); color: #fff; border-color: transparent; }
+  .field { margin-top: 14px; }
+  .field label { font-size: 12px; color: var(--muted2); font-weight: 600; }
+  .in-wrap { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin-top: 6px; }
+  .in-wrap input { border: 0; outline: 0; font-size: 13.5px; width: 100%; color: var(--ink); }
+  .in-wrap .ic { color: var(--muted); display: flex; }
+  .m-actions { display: grid; grid-template-columns: 1fr 1.2fr; gap: 10px; margin-top: 18px; }
+</style>
+</head>
+<body>
+
+<div class="head">
+  <h1>GoalUp — концепт по DESIGN_DESCRIPTION.md</h1>
+  <p>Светлый фиолетовый SaaS · кошелёк и очередь целей · ₽. Экран одного экрана → презентация дизайн-системы (как в референсе).</p>
+</div>
+
+<div class="canvas">
+
+  <!-- LEFT COLUMN -->
+  <div>
+    <!-- Desktop dashboard -->
+    <div class="frame">
+      <div class="frame-bar"><span class="bar-dots"><i></i><i></i><i></i></span><span class="bar-label">desktop · Главная (dashboard)</span></div>
+      <div class="dash app">
+        <aside class="sd">
+          <div class="logo">
+            <svg width="26" height="26" viewBox="0 0 24 24"><defs><linearGradient id="lp1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c3aed"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient></defs><circle cx="12" cy="12" r="11" fill="#fff" stroke="#e6e3ef"/><g fill="url(#lp1)"><ellipse cx="12" cy="5" rx="4" ry="7.5" transform="rotate(-24 12 12)"/></g><ellipse cx="12" cy="5" rx="4" ry="7.5" fill="#4f8df7" transform="rotate(96 12 12)"/><ellipse cx="12" cy="5" rx="4" ry="7.5" fill="#ed679a" transform="rotate(216 12 12)"/></svg>
+            GoalUp
+          </div>
+          <div class="item on">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Главная
+          </div>
+          <div class="item"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.5" fill="currentColor"/></svg>Мои цели</div>
+          <div class="item"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6h14M5 12h14M5 18h9"/></svg>Операции</div>
+          <div class="item"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V9M10 19V5M16 19v-8M22 19H2"/></svg>Статистика</div>
+          <div class="item"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 18v3M8.5 18a7 7 0 0 1-2-10A8 8 0 0 1 18 9"/><path d="M20 3l-1.5 3.5L15 8l3.5 1.5L20 13l1.5-3.5L25 8"/></svg></svg>Достижения</div>
+          <div class="item"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 3a9 9 0 0 1 8.6 6 9 9 0 0 1 0 6 9 9 0 0 1-17.2 0 9 9 0 0 1 0-6A9 9 0 0 1 12 3Z"/></svg>Настройки</div>
+          <div class="user">
+            <div class="ava">Д</div>
+            <div><div class="nm">Даня</div><div class="em">danya@mail.ru</div></div>
+            <span class="ar">›</span>
+          </div>
+        </aside>
+        <div class="main">
+          <div class="hrow">
+            <div class="crumbs">Главная</div>
+            <div class="act">
+              <div class="bell"><span class="dot"></span><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
+              <button class="btn-primary" onclick="document.getElementById('modal').classList.remove('hidden')">＋ Создать цель</button>
+            </div>
+          </div>
+          <div class="hello">Привет, Даня! 👋</div>
+          <div class="hello-sub">Продолжай в том же духе, ты на верном пути к своим целям.</div>
+
+          <div class="stats">
+            <div class="card stat"><div class="k">Всего накоплено</div><div class="v">667 000 ₽</div><div class="d up">+42 000 ₽ за последний месяц</div></div>
+            <div class="card stat"><div class="k">Активные цели</div><div class="v">4</div><div class="d"><span class="lnk">Смотреть все →</span></div></div>
+            <div class="card stat"><div class="k">Средний темп</div><div class="v">12 700 ₽/нед</div><div class="d up">+1 500 ₽ больше, чем раньше</div></div>
+            <div class="card stat"><div class="k">Ближайшая цель</div><div class="v" style="font-size:19px">MacBook Pro</div><div class="d mut">Через 84 дня</div></div>
+          </div>
+
+          <div class="sec"><h2>Мои цели</h2><span class="more">Смотреть все →</span></div>
+          <div class="goals">
+            <div class="card goal">
+              <div class="g-ico">💻</div>
+              <div class="g-name">MacBook Pro</div>
+              <div class="g-amt"><b>124 000 ₽</b> / 200 000 ₽</div>
+              <div class="bar"><i style="width:62%"></i></div>
+              <div class="g-pc">62%</div>
+              <div class="g-rest">осталось 76 000 ₽</div>
+              <div class="g-fc">прогноз <b>10 дек 2026</b></div>
+              <span class="grad-text tg">успеваешь</span>
+            </div>
+            <div class="card goal">
+              <div class="g-ico">🏖️</div>
+              <div class="g-name">Отпуск в Японии</div>
+              <div class="g-amt"><b>128 000 ₽</b> / 400 000 ₽</div>
+              <div class="bar"><i style="width:32%"></i></div>
+              <div class="g-pc">32%</div>
+              <div class="g-rest">осталось 272 000 ₽</div>
+              <div class="g-fc">прогноз <b>5 апр 2027</b></div>
+              <span class="grad-text tg">успеваешь</span>
+            </div>
+            <div class="card goal">
+              <div class="g-ico">🚗</div>
+              <div class="g-name">Новая машина</div>
+              <div class="g-amt"><b>350 000 ₽</b> / 1 500 000 ₽</div>
+              <div class="bar"><i style="width:23%"></i></div>
+              <div class="g-pc">23%</div>
+              <div class="g-rest">осталось 1 150 000 ₽</div>
+              <div class="g-fc">прогноз <b>12 янв 2028</b></div>
+              <span class="grad-text to">нужно внимание</span>
+            </div>
+            <div class="card goal">
+              <div class="g-ico">🎸</div>
+              <div class="g-name">Гитара Fender</div>
+              <div class="g-amt"><b>65 000 ₽</b> / 80 000 ₽</div>
+              <div class="bar"><i style="width:81%"></i></div>
+              <div class="g-pc">81%</div>
+              <div class="g-rest">осталось 15 000 ₽</div>
+              <div class="g-fc">прогноз <b>2 ноя 2026</b></div>
+              <span class="grad-text tg">почти готово</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row2">
+      <!-- Goal detail -->
+      <div class="frame">
+        <div class="frame-bar"><span class="bar-dots"><i></i><i></i><i></i></span><span class="bar-label">desktop · страница цели + «Что если?»</span></div>
+        <div class="gd app">
+          <div class="back">← Назад</div>
+          <div>
+            <div class="g-img">💻</div>
+            <div class="params">
+              <div class="row"><span class="k">Целевая сумма</span><span class="v">200 000 ₽</span></div>
+              <div class="row"><span class="k">Накоплено</span><span class="v">124 000 ₽</span></div>
+              <div class="row"><span class="k">Осталось</span><span class="v">76 000 ₽</span></div>
+              <div class="row"><span class="k">Дедлайн</span><span class="v">15 дек 2026</span></div>
+              <div class="row"><span class="k">Статус</span><span class="grad-text tg">Активная</span></div>
+            </div>
+          </div>
+          <div>
+            <div class="card prg">
+              <div class="head" style="padding:14px 16px 0">
+                <span style="font-size:13px;font-weight:800">Прогресс</span>
+                <span class="pct">62%</span>
+              </div>
+              <div style="padding:0 16px"><div class="amt" style="color:var(--muted2)">124 000 ₽ / 200 000 ₽</div></div>
+              <div class="bar big" style="margin:6px 16px 16px"><i style="width:62%"></i></div>
+            </div>
+            <div class="kpis">
+              <div class="card kpi"><div class="k">Осталось</div><div class="v">76 000 ₽</div></div>
+              <div class="card kpi"><div class="k">Прогнозируемая дата</div><div class="v" style="font-size:14px">10 дек 2026</div></div>
+              <div class="card kpi"><div class="k">Успеваешь на</div><div class="v green">5 дней</div></div>
+            </div>
+            <div class="card pace">
+              <div class="ttl">Необходимый темп</div>
+              <div class="cols">
+                <div><div class="c">7 600 ₽</div><div class="s">/ неделя</div></div>
+                <div><div class="c">32 900 ₽</div><div class="s">/ месяц</div></div>
+                <div><div class="c">1 100 ₽</div><div class="s">/ день</div></div>
+              </div>
+            </div>
+            <div class="card therest">
+              <div class="ttl">Что если?</div>
+              <div class="cur"><b id="wsVal">10 000</b><span>₽ / неделя</span></div>
+              <input id="ws" type="range" min="2000" max="20000" step="1000" value="10000" oninput="whatif(this.value)">
+              <div class="scale"><span>2 000</span><span id="wsNow">10 000 ₽/нед</span><span>20 000</span></div>
+              <div class="result">
+                <div class="lbl">Результат сценария</div>
+                <div class="line"><span class="date" id="wsDate">25 нояб 2026</span><span class="win" id="wsWin">на 15 дней раньше</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Operations -->
+      <div class="frame">
+        <div class="frame-bar"><span class="bar-dots"><i></i><i></i><i></i></span><span class="bar-label">desktop · операции</span></div>
+        <div class="ops app">
+          <div class="tabs">
+            <span class="tab on">Операции</span>
+            <span class="tab">Статистика</span>
+            <span class="tab">Достижения</span>
+            <span class="tab">Настройки цели</span>
+          </div>
+          <div class="rt">
+            <button class="btn-primary sm" onclick="document.getElementById('modal').classList.remove('hidden')">＋ Добавить операцию</button>
+          </div>
+          <table class="ops-t">
+            <thead><tr><th>Дата</th><th>Сумма</th><th>Тип</th><th>Комментарий</th><th>Источник</th></tr></thead>
+            <tbody>
+              <tr><td>15 авг 2026</td><td class="amt in">+10 000 ₽</td><td>Пополнение</td><td>Зарплата</td><td>🟣 Основной</td></tr>
+              <tr><td>8 авг 2026</td><td class="amt in">+5 000 ₽</td><td>Пополнение</td><td>Подработка</td><td>🟢 Доп. доход</td></tr>
+              <tr><td>2 авг 2026</td><td class="amt out">−2 000 ₽</td><td>Снятие</td><td>Возврат</td><td>⭕ Другое</td></tr>
+              <tr><td>28 июл 2026</td><td class="amt in">+10 000 ₽</td><td>Пополнение</td><td>Зарплата</td><td>🟣 Основной</td></tr>
+              <tr><td>21 июл 2026</td><td class="amt in">+5 000 ₽</td><td>Пополнение</td><td>Подработка</td><td>🟢 Доп. доход</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="frame">
+      <div class="frame-bar"><span class="bar-dots"><i></i><i></i><i></i></span><span class="bar-label">desktop · статистика цели</span></div>
+      <div class="stts app">
+        <div class="top">
+          <h2 style="font-size:18px;font-weight:800">Статистика</h2>
+          <div style="display:flex;gap:8px">
+            <span class="sel">MacBook Pro ▾</span>
+            <span class="sel">6 месяцев ▾</span>
+          </div>
+        </div>
+        <div class="st-kpis">
+          <div class="card st-card"><div class="k">Всего пополнений</div><div class="v">18</div></div>
+          <div class="card st-card"><div class="k">Всего внесено</div><div class="v" style="color:var(--violet)">124 000 ₽</div></div>
+          <div class="card st-card"><div class="k">Среднее пополнение</div><div class="v">6 890 ₽</div></div>
+          <div class="card st-card"><div class="k">Лучший месяц</div><div class="v"><b>Июнь</b></div><div class="d mut">42 000 ₽</div></div>
+        </div>
+        <div class="charts">
+          <div class="card st-card ch">
+            <h4>Динамика накоплений</h4>
+            <svg viewBox="0 0 360 120" width="100%" height="110" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#8b5cf6" stop-opacity=".25"/>
+                  <stop offset="1" stop-color="#8b5cf6" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <path d="M0 104 L40 96 L80 100 L120 84 L160 88 L200 64 L240 70 L280 40 L320 30 L360 12 L360 120 L0 120 Z" fill="url(#area)"/>
+              <path d="M0 104 L40 96 L80 100 L120 84 L160 88 L200 64 L240 70 L280 40 L320 30 L360 12" fill="none" stroke="#7c3aed" stroke-width="2.5" stroke-linecap="round"/>
+              <g fill="#7c3aed"><circle cx="0" cy="104" r="3"/><circle cx="80" cy="100" r="3"/><circle cx="160" cy="88" r="3"/><circle cx="240" cy="70" r="3"/><circle cx="320" cy="30" r="3"/><circle cx="360" cy="12" r="3"/></g>
+            </svg>
+            <div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);margin-top:2px"><span>мар</span><span>апр</span><span>май</span><span>июн</span><span>июл</span><span>авг</span></div>
+          </div>
+          <div class="card st-card ch">
+            <h4>Распределение пополнений</h4>
+            <div style="width:96px;height:96px;border-radius:50%;margin:4px auto;background:conic-gradient(#7c3aed 0 60%, #12b77c 60% 90%, #f2a93b 90% 100%)"></div>
+            <div class="legend">
+              <span><i style="background:#7c3aed"></i>Зарплата 60%</span>
+              <span><i style="background:#12b77c"></i>Подработка 30%</span>
+              <span><i style="background:#f2a93b"></i>Другое 10%</span>
+            </div>
+          </div>
+          <div class="card st-card ch">
+            <h4>Пополнения по неделям</h4>
+            <div style="display:flex;align-items:flex-end;gap:5px;height:96px">
+              <div style="flex:1;height:30%;background:linear-gradient(180deg,#8b5cf6,#7c3aed);border-radius:4px 4px 0 0"></div>
+              <div style="flex:1;height:55%;background:linear-gradient(180deg,#8b5cf6,#7c3aed);border-radius:4px 4px 0 0"></div>
+              <div style="flex:1;height:40%;background:linear-gradient(180deg,#8b5cf6,#7c3aed);border-radius:4px 4px 0 0"></div>
+              <div style="flex:1;height:80%;background:linear-gradient(180deg,#8b5cf6,#7c3aed);border-radius:4px 4px 0 0"></div>
+              <div style="flex:1;height:65%;background:linear-gradient(180deg,#8b5cf6,#7c3aed);border-radius:4px 4px 0 0"></div>
+              <div style="flex:1;height:100%;background:linear-gradient(180deg,#8b5cf6,#7c3aed);border-radius:4px 4px 0 0"></div>
+              <div style="flex:1;height:75%;background:linear-gradient(180deg,#8b5cf6,#7c3aed);border-radius:4px 4px 0 0"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);margin-top:4px"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT COLUMN: phones -->
+  <div style="display:flex;flex-direction:column;gap:26px;position:sticky;top:16px">
+    <div>
+      <div class="frame-bar" style="border-bottom:0;border-radius:16px 16px 0 0"><span class="bar-dots"><i></i><i></i><i></i></span><span class="bar-label">mobile · главная</span></div>
+      <div class="phone" style="margin-top:-1px;border-radius:0 0 38px 38px">
+        <div class="notch"><span class="t">9:41</span><span style="display:flex;gap:4px"><i style="width:15px;height:9px;border:1.5px solid #333;border-radius:2px;display:block"></i><span style="font-weight:700">5G</span></span></div>
+        <div class="scr">
+          <div class="p-top">
+            <svg width="18" height="12" viewBox="0 0 18 12" fill="none" stroke="#1a2030" stroke-width="2"><path d="M1 3h16M1 6h16M1 9h10"/></svg>
+            <span class="p-title">Главная</span>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1a2030" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/></svg>
+          </div>
+          <div class="sum">
+            <div class="k">Всего накоплено</div>
+            <div class="v">667 000 ₽</div>
+            <div class="delta">+42 000 ₽ за последний месяц</div>
+            <svg width="86" height="40" viewBox="0 0 86 40" fill="none" preserveAspectRatio="none">
+              <path d="M0 34 L18 28 L36 32 L54 18 L70 20 L86 6" stroke="rgba(255,255,255,.9)" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="p-sec">Мои цели <span class="plus">＋</span></div>
+          <div class="p-goal"><span class="i">💻</span><div><div class="n">MacBook Pro</div><div class="s">124 000 / 200 000 ₽</div></div><span class="pc">62%</span></div>
+          <div class="p-goal"><span class="i">🏖️</span><div><div class="n">Отпуск в Японии</div><div class="s">128 000 / 400 000 ₽</div></div><span class="pc">32%</span></div>
+          <div class="p-goal"><span class="i">🚗</span><div><div class="n">Новая машина</div><div class="s">350 000 / 1 500 000 ₽</div></div><span class="pc">23%</span></div>
+          <div class="p-goal"><span class="i">🎸</span><div><div class="n">Гитара Fender</div><div class="s">65 000 / 80 000 ₽</div></div><span class="pc">81%</span></div>
+          <div class="pnv">
+            <span class="it on"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5M5 9.5V21h14V9.5"/></svg>Главная</span>
+            <span class="it"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="7"/></svg>Цели</span>
+            <span class="it"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6h14M5 12h14M5 18h9"/></svg>Операции</span>
+            <span class="it"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V9M10 19V5M16 19v-8M22 19H2"/></svg>Статистика</span>
+            <span class="it"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="3.5"/><path d="M6 21a6 6 0 0 1 12 0"/></svg>Профиль</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="frame-bar" style="border-bottom:0;border-radius:16px 16px 0 0"><span class="bar-dots"><i></i><i></i><i></i></span><span class="bar-label">mobile · страница цели</span></div>
+      <div class="phone" style="margin-top:-1px;border-radius:0 0 38px 38px">
+        <div class="notch"><span class="t">9:41</span><span style="display:flex;gap:4px"><i style="width:15px;height:9px;border:1.5px solid #333;border-radius:2px;display:block"></i><span style="font-weight:700">5G</span></span></div>
+        <div class="scr">
+          <div class="p-top">
+            <svg width="18" height="12" viewBox="0 0 18 12" fill="none" stroke="#1a2030" stroke-width="2"><path d="M1 3h16M1 6h16M1 9h10"/></svg>
+            <span class="p-title">MacBook Pro</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1a2030" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </div>
+          <div class="p-hero">💻</div>
+          <div class="p-progbox">
+            <div class="row"><span class="pct">62%</span><span class="amt">124 000 ₽ / 200 000 ₽</span></div>
+            <div class="bar big" style="margin-top:10px"><i style="width:62%"></i></div>
+          </div>
+          <div class="p-rows">
+            <div class="p-row"><span class="k">Осталось</span><span class="v">76 000 ₽</span></div>
+            <div class="p-row"><span class="k">Прогноз</span><span class="v">10 дек 2026</span></div>
+            <div class="p-row"><span class="k">Успеваешь на</span><span class="v green">5 дней</span></div>
+          </div>
+          <div class="p-what">
+            <div style="font-weight:800;font-size:13px">Что если?</div>
+            <div class="n">взнос <b id="pws">10 000</b> ₽ / неделя</div>
+            <input type="range" min="2000" max="20000" step="1000" value="10000" oninput="pWhat(this.value)">
+            <div class="d" id="pwd">25 нояб 2026</div>
+            <div class="win" id="pwwin">на 15 дней раньше</div>
+          </div>
+          <button class="btn-primary cta-mobile" onclick="document.getElementById('modal').classList.remove('hidden')">＋ Добавить операцию</button>
+          <div class="pnv">
+            <span class="it"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5M5 9.5V21h14V9.5"/></svg>Главная</span>
+            <span class="it on"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="7"/></svg>Цели</span>
+            <span class="it"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6h14M5 12h14M5 18h9"/></svg>Операции</span>
+            <span class="it"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V9M10 19V5M16 19v-8M22 19H2"/></svg>Статистика</span>
+            <span class="it"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="3.5"/><path d="M6 21a6 6 0 0 1 12 0"/></svg>Профиль</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-ov" id="modal">
+  <div class="modal">
+    <div class="m-head">Добавить операцию <button class="m-x" onclick="document.getElementById('modal').classList.add('hidden')">✕</button></div>
+    <div class="seg2">
+      <button class="on" id="tIn" onclick="toggleType(this)">Пополнение</button>
+      <button id="tOut" onclick="toggleType(this)">Снятие</button>
+    </div>
+    <div class="field"><label>Сумма</label>
+      <div class="in-wrap"><input value="10 000" type="text"><span style="color:var(--muted2);font-weight:700">₽</span></div>
+    </div>
+    <div class="field"><label>Дата</label>
+      <div class="in-wrap"><input value="15.08.2026"><span class="ic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M8 2v4M16 2v4M3 10h18"/></svg></span></div>
+    </div>
+    <div class="field"><label>Комментарий (необязательно)</label>
+      <div class="in-wrap"><input value="Зарплата"></div>
+    </div>
+    <div class="m-actions">
+      <button class="btn-ghost" onclick="document.getElementById('modal').classList.add('hidden')">Отмена</button>
+      <button class="btn-primary" style="justify-content:center" onclick="document.getElementById('modal').classList.add('hidden')">Добавить</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function whatif(v){
+    document.getElementById('wsVal').textContent = Number(v).toLocaleString('ru-RU');
+    document.getElementById('wsNow').textContent = Number(v).toLocaleString('ru-RU') + ' ₽/нед';
+    const deltaDays = Math.round((20000 - v) / 800); // 0..22 дней раньше
+    const base = new Date('2026-12-10');
+    base.setDate(base.getDate() - deltaDays);
+    const d = base.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' });
+    document.getElementById('wsDate').textContent = d.replace('г.', '').trim();
+    document.getElementById('wsWin').textContent = deltaDays ? `на ${deltaDays} дн. раньше` : 'по плану (10 дек)';
+  }
+  function pWhat(v){
+    document.getElementById('pws').textContent = Number(v).toLocaleString('ru-RU');
+    const deltaDays = Math.round((20000 - v) / 800);
+    const base = new Date('2026-12-10');
+    base.setDate(base.getDate() - deltaDays);
+    document.getElementById('pwd').textContent = base.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' }).replace('г.','').trim();
+    document.getElementById('pwwin').textContent = deltaDays ? `на ${deltaDays} дн. раньше` : 'по плану';
+  }
+  function toggleType(btn){
+    const a = document.getElementById('tIn'), b = document.getElementById('tOut');
+    if(btn === a){ a.classList.add('on'); b.classList.remove('on'); }
+    else { b.classList.add('on'); a.classList.remove('on'); }
+  }
+</script>
+
+</body>
+</html>

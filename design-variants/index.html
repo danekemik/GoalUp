@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoalUp — варианты дизайна</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f4f5f7; color: #111827; line-height: 1.5; padding: 40px 20px;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  h1 { font-size: 30px; letter-spacing: -.02em; }
+  p.lead { color: #6b7280; margin-top: 8px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 32px; }
+  .card {
+    display: flex; flex-direction: column; background: #fff; border-radius: 16px;
+    border: 1px solid #e5e7eb; overflow: hidden; text-decoration: none; color: inherit;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 18px 30px -18px rgba(0,0,0,.25); }
+  .thumb { height: 200px; position: relative; }
+  .t1 { background: linear-gradient(140deg, #f6f8fc, #eef3ff); }
+  .t2 { background:
+    radial-gradient(300px 160px at 80% 0%, rgba(246,166,9,.35), transparent),
+    radial-gradient(300px 170px at 10% 20%, rgba(255,107,74,.3), transparent),
+    #fff7ec; }
+  .t3 { background:
+    radial-gradient(400px 200px at 70% -10%, rgba(59,130,246,.25), transparent),
+    #0b1220; }
+  .thumb .fake { position: absolute; inset: 0; padding: 22px; }
+  .fake .bar { height: 8px; background: rgba(0,0,0,.08); border-radius: 99px; margin-bottom: 8px; }
+  .t3 .fake .bar { background: rgba(255,255,255,.12); }
+  .fake .bar40 { width: 40%; } .fake .bar70 { width: 70%; } .fake .bar90 { width: 90%; }
+  .fake .block { height: 46px; border-radius: 12px; background: rgba(255,255,255,.85); box-shadow: 0 6px 14px -8px rgba(0,0,0,.15); margin-bottom: 10px; }
+  .t3 .fake .block { background: #16213a; border: 1px solid rgba(148,163,184,.18); }
+  .fake .pill { display: inline-block; padding: 8px 16px; border-radius: 999px; font-size: 14px; font-weight: 800; margin-top: 4px; }
+  .p1 { background: #2563eb; color: #fff; }
+  .p2 { background: #ff6b4a; color: #fff; border: 3px solid #3b2f2f; box-shadow: 4px 4px 0 #3b2f2f; }
+  .p3 { background: #3b82f6; color: #fff; border-radius: 6px; }
+
+  .card .body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .card .tag { font-size: 12px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: .05em; }
+  .card h2 { font-size: 19px; letter-spacing: -.01em; }
+  .card .desc { font-size: 14px; color: #6b7280; }
+  .card .features { font-size: 13px; color: #374151; border-top: 1px solid #e5e7eb; padding-top: 12px; margin-top: 4px; }
+  .card .go { margin-top: auto; font-size: 14px; font-weight: 700; color: #2563eb; }
+  .section-title { max-width: 1080px; margin: 48px auto 0; font-size: 13px; font-weight: 800; color: #6b7280; text-transform: uppercase; letter-spacing: .06em; }
+  .note { max-width: 1080px; margin: 18px auto 0; padding: 14px 18px; border-radius: 12px; border: 1px dashed #d1d5db; background: #fffbeb; font-size: 13.5px; color: #78350f; }
+  .note b { font-weight: 800; }
+  footer { margin-top: 40px; text-align: center; font-size: 13px; color: #9ca3af; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>GoalUp · 3 направления дизайна</h1>
+  <p class="lead">Три принципиально разных подхода — не только цвет, а структура, формы и логика расположения. Открой каждый файл и выбери направление.</p>
+
+  <div class="grid">
+    <a class="card" href="variant-1-aurora.html">
+      <div class="thumb t1">
+        <div class="fake">
+          <div class="bar bar90" style="background:#dbe7ff"></div>
+          <div class="bar bar70" style="background:#e6edf7"></div>
+          <div class="block" style="background:#fff;border:1px solid #e2e8f0"></div>
+          <span class="pill p1">Начать бесплатно</span>
+        </div>
+      </div>
+      <div class="body">
+        <span class="tag">Вариант 1 · светлый классика</span>
+        <h2>Aurora</h2>
+        <div class="desc">Дышащий белый фон, центрированный hero, шапка с навигацией сверху, чистая сетка карточек и аккуратные прогресс-бары.</div>
+        <div class="features">▸ верхнее меню · hero «текст + превью кошелька» · 3 карточки преимуществ · шаги-челленджи</div>
+        <span class="go">Открыть вариант →</span>
+      </div>
+    </a>
+
+    <a class="card" href="variant-2-path.html">
+      <div class="thumb t2">
+        <div class="fake">
+          <div style="display:flex;gap:10px;align-items:center">
+            <span style="font-size:26px">🐷</span>
+            <span class="pill p2">Начать путь</span>
+          </div>
+          <div class="block" style="background:#fffdf8;border:3px solid #3b2f2f;border-radius:16px;margin-top:14px"></div>
+          <div class="bar" style="width:64%;background:#ffd166;height:14px;border:2px solid #3b2f2f"></div>
+        </div>
+      </div>
+      <div class="body">
+        <span class="tag">Вариант 2 · игровая копилка</span>
+        <h2>Путь</h2>
+        <div class="desc">Тёплый «бумажный» стиль: цели — станции вдоль дороги с флажками и звёздами-вехами, кошелёк — нарисованная копилка.</div>
+        <div class="features">▸ нет классического меню: пилюли-кнопки · hero по центру · дорога целей с очередью · офсетные тени и толстые рамки</div>
+        <span class="go">Открыть вариант →</span>
+      </div>
+    </a>
+
+    <a class="card" href="variant-3-terminal.html">
+      <div class="thumb t3">
+        <div class="fake">
+          <div style="display:flex;gap:12px">
+            <div style="width:24%;display:flex;flex-direction:column;gap:8px">
+              <div class="bar bar90" style="background:rgba(59,130,246,.5)"></div>
+              <div class="bar bar70" style="background:rgba(255,255,255,.12)"></div>
+              <div class="bar bar70" style="background:rgba(255,255,255,.12)"></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:10px">
+              <span class="pill p3">Обзор</span>
+              <div class="block"></div>
+              <div class="block" style="height:34px"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="body">
+        <span class="tag">Вариант 3 · тёмный рабочий стол</span>
+        <h2>Terminal</h2>
+        <div class="desc">Тёмный профессиональный дашборд: боковой сайдбар, большие метрики, таблица целей с чёткой типографикой и журнал операций.</div>
+        <div class="features">▸ сайдбар-навигация · колонки метрик · таблицы и статус-чипы · график колонками</div>
+        <span class="go">Открыть вариант →</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="section-title">Приложение · варианты дашборда</div>
+
+  <div class="grid">
+    <a class="card" href="app-1-cabinet.html">
+      <div class="thumb t1">
+        <div class="fake">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div class="bar bar40" style="background:#dbe7ff;margin:0"></div>
+            <span style="font-size:11px;font-weight:800;color:#fff;background:#0e9f6e;border-radius:99px;padding:4px 10px">＋ Пополнить</span>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <div class="block" style="flex:1;height:52px;box-shadow:none"></div>
+            <div class="block" style="flex:1;height:52px;box-shadow:none"></div>
+          </div>
+          <div class="block" style="height:34px;box-shadow:none"></div>
+        </div>
+      </div>
+      <div class="body">
+        <span class="tag">Приложение · светлый карточный</span>
+        <h2>Кабинет</h2>
+        <div class="desc">Всё на одном экране: метрики сверху, слева очередь целей-карточек (первая — активная, с кнопкой «Достигнута»), справа кошелёк с быстрым пополнением.</div>
+        <div class="features">▸ верхнее меню-таблетки · карточки целей с прогресс-барами · панель кошелька с историей · эмодзи-иконки</div>
+        <span class="go">Открыть вариант →</span>
+      </div>
+    </a>
+
+    <a class="card" href="app-2-queue.html">
+      <div class="thumb t2">
+        <div class="fake">
+          <div style="display:flex;gap:16px">
+            <div style="width:34%;display:flex;flex-direction:column;gap:8px">
+              <div class="bar bar70" style="background:#efe0b4;margin:0"></div>
+              <div class="bar bar90" style="background:#efe0b4"></div>
+              <div class="block" style="height:40px;box-shadow:none;border:2px solid #3b2f2f"></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="width:26px;height:26px;border-radius:50%;background:#d97706;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px">1</span>
+                <div class="bar bar70" style="background:#e4d9b8;margin:0"></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="width:26px;height:26px;border-radius:50%;border:2px dashed #3b2f2f;color:#8a8474;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px">2</span>
+                <div class="bar bar40" style="background:#e4d9b8;margin:0"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="body">
+        <span class="tag">Приложение · очередь-степпер</span>
+        <h2>Очередь</h2>
+        <div class="desc">Цели — вертикальные шаги с номерами: активная раскрыта полностью (остаток, темп, дедлайн, прогноз), остальные свёрнуты. Слева «карман» кошелька.</div>
+        <div class="features">▸ нумерация-кружки и соединительные линии · большой прогресс активной цели · цифровые метрики · миникарта накоплений</div>
+        <span class="go">Открыть вариант →</span>
+      </div>
+    </a>
+
+    <a class="card" href="app-3-console.html">
+      <div class="thumb t3">
+        <div class="fake" style="padding:18px">
+          <div style="display:flex;gap:12px">
+            <div style="width:22%;display:flex;flex-direction:column;gap:8px">
+              <div class="bar bar90" style="background:rgba(59,130,246,.5);margin:0"></div>
+              <div class="bar bar70" style="background:rgba(255,255,255,.12)"></div>
+              <div class="bar bar70" style="background:rgba(255,255,255,.12)"></div>
+            </div>
+            <div style="flex:1">
+              <div class="block" style="height:14px;box-shadow:none"></div>
+              <div class="block" style="height:14px;margin-top:8px;box-shadow:none"></div>
+              <div class="block" style="height:14px;margin-top:8px;box-shadow:none;background:rgba(255,255,255,.4)"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="body">
+        <span class="tag">Приложение · тёмная табличная</span>
+        <h2>Консоль</h2>
+        <div class="desc">Плотный тёмный рабочий стол: полная таблица целей (сумма, покрыто, прогресс, прогноз), сегменты-фильтры, колонка журналов и блок «каскад».</div>
+        <div class="features">▸ сайдбар · таблица-сводка всех 5 целей · фильтры Все/Активные/Завершённые · история операций · цифровая типографика</div>
+        <span class="go">Открыть вариант →</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="section-title">Концепт по DESIGN_DESCRIPTION.md (± вариации)</div>
+
+  <div class="grid">
+    <a class="card" href="concept-1-etalon.html">
+      <div class="thumb t1" style="background:linear-gradient(140deg,#f4f1fb,#efe9fd)">
+        <div class="fake">
+          <div style="display:flex;gap:14px">
+            <div style="width:20%;display:flex;flex-direction:column;gap:7px">
+              <div class="bar bar90" style="background:#7c3aed;height:10px"></div>
+              <div class="bar bar70" style="background:rgba(124,58,237,.18)"></div>
+              <div class="bar bar70" style="background:rgba(124,58,237,.18)"></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+              <div class="bar bar90" style="background:rgba(124,58,237,.25)"></div>
+              <div style="display:flex;gap:6px">
+                <span class="pill" style="background:#fff;border:1px solid #e2e0ee;color:#5b5670;border-radius:8px">667 000 ₽</span>
+                <span class="pill p3">Создать цель</span>
+              </div>
+              <div class="block" style="background:linear-gradient(135deg,#7c3aed,#8b5cf6);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800">Мои цели</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="body">
+        <span class="tag">Эталон по описанию · фиолетовый SaaS</span>
+        <h2>Concept · etalon</h2>
+        <div class="desc">Точная реализация DESIGN_DESCRIPTION.md: презентация дизайн-системы на одном полотне — desktop-главная, страница цели, «Что если?», операции, статистика, модалка операции, два мобильных экрана.</div>
+        <div class="features">▸ сайдбар 176px · визитки статистики и 4 карточки целей · живой слайдер «Что если?» · фиолет расход/графики</div>
+        <span class="go">Открыть эталон →</span>
+      </div>
+    </a>
+
+    <a class="card" href="variation-2-izumrud.html">
+      <div class="thumb t1" style="background:linear-gradient(140deg,#ecf7f2,#e1f3ea)">
+        <div class="fake">
+          <div style="display:flex;gap:14px">
+            <div style="width:20%;display:flex;flex-direction:column;gap:7px">
+              <div class="bar bar90" style="background:#0d9f6d;height:10px"></div>
+              <div class="bar bar70" style="background:rgba(13,159,109,.18)"></div>
+              <div class="bar bar70" style="background:rgba(13,159,109,.18)"></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+              <div class="bar bar90" style="background:rgba(13,159,109,.25)"></div>
+              <span class="pill" style="background:linear-gradient(135deg,#0d9f6d,#13b57f);color:#fff">Создать цель</span>
+              <div class="block" style="background:#fff;border:1px solid #cfe8db"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="body">
+        <span class="tag">Вариация · та же композиция</span>
+        <h2>Изумруд</h2>
+        <div class="desc">Структура эталона один в один, но брендовый акцент — изумрудный (mint), как в нашей палитре. Проверяем, как концепт ложится на бренд-цвет без переработки макета.</div>
+        <div class="features">▸ тот же дашборд · изумрудные кнопки/бары/графики · ровно та же иерархия экранов</div>
+        <span class="go">Открыть вариацию →</span>
+      </div>
+    </a>
+
+    <a class="card" href="variation-3-ochered.html">
+      <div class="thumb t1" style="background:linear-gradient(140deg,#f4f1fb,#efe9fd)">
+        <div class="fake">
+          <div style="display:flex;gap:14px">
+            <div style="width:20%;display:flex;flex-direction:column;gap:7px">
+              <div class="bar bar90" style="background:#7c3aed;height:10px"></div>
+              <div class="bar bar70" style="background:rgba(124,58,237,.18)"></div>
+              <div class="bar bar70" style="background:rgba(124,58,237,.18)"></div>
+            </div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:7px">
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="width:20px;height:20px;border-radius:50%;background:#7c3aed;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800">1</span>
+                <div class="bar bar90" style="background:#7c3aed;height:12px;margin:0"></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="width:20px;height:20px;border-radius:50%;background:#fff;border:1px solid #d8d3ea;color:#5b5670;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800">2</span>
+                <div class="bar bar70" style="background:rgba(124,58,237,.4);height:8px;margin:0"></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="width:20px;height:20px;border-radius:50%;background:#fff;border:1px solid #d8d3ea;color:#5b5670;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800">3</span>
+                <div class="bar bar40" style="background:rgba(124,58,237,.4);height:8px;margin:0"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="body">
+        <span class="tag">Вариация · адаптация под модель</span>
+        <h2>Очередь</h2>
+        <div class="desc">Эталон фиолетового стиля, но главная переработана под наш продукт: общий кошелёк, вертикальная очередь с активной целью (кнопка «Цель достигнута 🎉»), каскад-подсказки «куда перетечёт остаток», прави́ла каскада.</div>
+        <div class="features">▸ карточка кошелька · очередь 1–2–3 с чипами · блок каскада · история операций в колонке</div>
+        <span class="go">Открыть вариацию →</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="note"><b>Лендинг отложен.</b> Пометить здесь: лендинг делаем позже — не забыть вернуться к трем вариантам landing (Aurora / Путь / Terminal) и выбрать концепцию для главной страницы.</div>
+
+  <footer>Открываются двойным кликом или через браузер: файл → открыть. Никакой установки не нужно.</footer>
+</div>
+</body>
+</html>

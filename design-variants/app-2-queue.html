@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Приложение · Вариант 2 «Очередь» · GoalUp</title>
+<style>
+  :root {
+    --bg: #faf6ee; --paper: #fffdf8; --ink: #26241e; --muted: #8a8474;
+    --line: #ece6d8; --accent: #d97706; --accent-soft: #fdf0dd;
+    --green: #3c8c5c; --green-soft: #e7f3ec;
+    --danger: #c2453a; --shadow: 0 16px 34px -20px rgba(60,50,20,.28);
+    --radius: 20px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.5; }
+  .top { display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto; padding: 22px 24px; }
+  .logo { font-family: Georgia, "Times New Roman", serif; font-size: 22px; font-weight: 700; }
+  .logo span { color: var(--accent); }
+  .pill { display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; font-weight: 700; font-size: 14px; border-radius: 999px; }
+  .pill.balance { background: #fff; border: 2px solid var(--line); }
+  .pill.add { background: var(--ink); color: #fff; }
+
+  .layout { max-width: 1200px; margin: 0 auto; padding: 0 24px 60px; display: grid; grid-template-columns: 300px 1fr; gap: 28px; align-items: start; }
+
+  /* ---------- Left rail ---------- */
+  .rail { position: sticky; top: 24px; }
+  .card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
+  .card h3 { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+  .balance { font-size: 40px; font-weight: 800; letter-spacing: -.02em; margin-top: 8px; font-variant-numeric: tabular-nums; }
+  .balance-note { font-size: 13px; color: var(--green); font-weight: 600; margin-top: 4px; }
+  .spark { margin-top: 18px; }
+  .quick { margin-top: 20px; }
+  .quick .row { display: flex; gap: 8px; margin-top: 10px; }
+  .quick input { flex: 1; border: 2px solid var(--line); background: #fff; border-radius: 12px; padding: 12px 14px; font-size: 15px; }
+  .quick .go { background: var(--accent); color: #fff; border: 0; border-radius: 12px; padding: 0 16px; font-weight: 700; font-size: 15px; cursor: pointer; }
+  .ops { margin-top: 20px; }
+  .op { display: flex; justify-content: space-between; gap: 10px; padding: 11px 0; border-bottom: 1px dashed var(--line); font-size: 13.5px; }
+  .op:last-child { border-bottom: 0; }
+  .op .am { font-weight: 800; font-variant-numeric: tabular-nums; }
+  .op .am.in { color: var(--green); } .op .am.out { color: var(--danger); }
+  .op .when { color: var(--muted); font-size: 12px; }
+  .link { margin-top: 18px; text-align: center; color: var(--accent); font-weight: 700; font-size: 14px; }
+
+  /* ---------- Queue ---------- */
+  .step { position: relative; padding-left: 74px; }
+  .step::before { content: ""; position: absolute; left: 30px; top: 58px; bottom: -26px; width: 3px; background: var(--line); }
+  .step:last-child::before { display: none; }
+  .num { position: absolute; left: 0; top: 0; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 22px; }
+  .step.done .num { background: var(--green); color: #fff; }
+  .step.current .num { background: var(--accent); color: #fff; box-shadow: 0 0 0 6px var(--accent-soft); }
+  .step.next .num { background: #fff; border: 2px dashed var(--line); color: var(--muted); }
+
+  .scard { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); margin-bottom: 24px; }
+  .scard.current { border: 2px solid var(--accent); }
+  .s-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .s-ico { font-size: 34px; }
+  .s-title { font-size: 20px; font-weight: 800; letter-spacing: -.01em; }
+  .s-sub { color: var(--muted); font-size: 13px; }
+  .drag { margin-left: auto; color: var(--muted); cursor: grab; font-size: 20px; }
+
+  .big-bar { height: 16px; border-radius: 999px; background: var(--line); margin-top: 20px; overflow: hidden; }
+  .big-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), #f5b23f); width: 0; }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 20px; }
+  .st { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+  .st .k { font-size: 11.5px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+  .st .val { font-size: 19px; font-weight: 800; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .st .hint { font-size: 12px; color: var(--muted); }
+
+  .cta-row { display: flex; align-items: center; gap: 12px; margin-top: 22px; flex-wrap: wrap; }
+  .cta-main { background: var(--green); color: #fff; border: 0; padding: 14px 22px; border-radius: 999px; font-weight: 800; font-size: 15px; cursor: pointer; box-shadow: 0 14px 26px -12px rgba(60,140,92,.6); }
+  .cta-line { color: var(--muted); font-size: 13px; }
+
+  .scard.mini .s-head { font-size: 15px; font-weight: 700; }
+  .scard.mini .mini-close { display: flex; align-items: center; gap: 14px; margin-top: 14px; width: 100%; }
+  .scard.mini .track { flex: 1; height: 8px; border-radius: 999px; background: var(--line); overflow: hidden; }
+  .scard.mini .track i { display: block; height: 100%; background: var(--green); }
+  .scard.mini .p { font-weight: 800; font-size: 13px; min-width: 42px; text-align: right; }
+  .cov-chip { font-size: 11.5px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: var(--green-soft); color: var(--green); }
+
+  .done-block { margin-top: 8px; }
+  .done-row { display: flex; align-items: center; gap: 12px; background: var(--paper); border: 1px dashed var(--line); border-radius: 14px; padding: 14px 18px; margin-top: 12px; font-size: 14px; }
+  .done-row .ok { width: 24px; height: 24px; border-radius: 50%; background: var(--green); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a class="logo" href="#">Goal<span>Up</span></a>
+  <div style="display:flex;gap:10px;align-items:center">
+    <span class="pill balance">Кошелёк: 216 000 ₽</span>
+    <span class="pill add">＋ Пополнить</span>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="rail">
+    <div class="card">
+      <h3>Кошелёк</h3>
+      <div class="balance">216 000 ₽</div>
+      <div class="balance-note">▲ +8 000 ₽ за 30 дней</div>
+      <svg class="spark" viewBox="0 0 240 54" width="240" height="54" fill="none">
+        <path d="M2 42 L28 36 L52 40 L78 30 L104 32 L130 22 L156 26 L184 14 L210 16 L238 8" stroke="#d97706" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+      <div class="quick">
+        <div style="font-size:13.5px;font-weight:700">Быстрое пополнение</div>
+        <div class="row">
+          <input type="number" placeholder="Сумма, ₽" value="8000">
+          <button class="go">Ок</button>
+        </div>
+      </div>
+      <div class="ops">
+        <div class="op"><span>Пополнение</span><span class="when">сегодня</span><span class="am in">+8 000 ₽</span></div>
+        <div class="op"><span>Снятие</span><span class="when">вчера</span><span class="am out">−3 000 ₽</span></div>
+        <div class="op"><span>Завершение · Отпуск</span><span class="when">15.09</span><span class="am out">−120 000 ₽</span></div>
+        <div class="op"><span>Завершение · MacBook</span><span class="when">12.09</span><span class="am out">−96 000 ₽</span></div>
+      </div>
+    </div>
+    <div class="link">История операций →</div>
+  </aside>
+
+  <main>
+    <h1 style="font-size:26px;font-weight:800;letter-spacing:-.01em">Моя очередь</h1>
+    <p style="color:var(--muted);font-size:14px;margin-top:2px">Каждая цель — шаг. Накопления сами перетекают по порядку.</p>
+
+    <div class="step" style="margin-top:34px">
+      <div class="num">✓</div>
+      <div class="scard mini">
+        <div class="s-head">
+          <span>🏖</span> Отпуск в Грузии <span class="cov-chip">завершена</span>
+          <span class="drag" style="font-size:0"></span>
+        </div>
+        <div class="mini-close"><div class="track"><i style="width:100%"></i></div><span class="p">100%</span></div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">✓</div>
+      <div class="scard mini">
+        <div class="s-head">
+          <span>💻</span> MacBook Pro <span class="cov-chip">завершена</span>
+          <span class="drag" style="font-size:0"></span>
+        </div>
+        <div class="mini-close"><div class="track"><i style="width:100%"></i></div><span class="p">100%</span></div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">1</div>
+      <div class="scard current">
+        <div class="s-head">
+          <span class="s-ico">🛟</span>
+          <div>
+            <div class="s-title">Подушка безопасности</div>
+            <div class="s-sub">порядок №1 · активная цель</div>
+          </div>
+          <span class="drag">⠿</span>
+        </div>
+        <div class="big-bar"><i style="width:64%"></i></div>
+        <div class="stats">
+          <div class="st"><div class="k">Собрано</div><div class="val">192 000 ₽</div><div class="hint">из 300 000 ₽</div></div>
+          <div class="st"><div class="k">Осталось</div><div class="val">108 000 ₽</div><div class="hint">нужно накопить</div></div>
+          <div class="st"><div class="k">Темп</div><div class="val">9 000 ₽/нед</div><div class="hint">по вашим пополнениям</div></div>
+          <div class="st"><div class="k">Дедлайн</div><div class="val">10.12</div><div class="hint" style="color:var(--green)">успеваешь</div></div>
+        </div>
+        <div class="cta-row">
+          <button class="cta-main">Достигнута 🎉</button>
+          <span class="cta-line">покрыто +108 000 ₽: заверши → дальше пойдёт на следующую цель</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">2</div>
+      <div class="scard mini">
+        <div class="s-head">
+          <span>🚗</span> Автомобиль
+          <span class="drag">⠿</span>
+        </div>
+        <div class="mini-close"><div class="track"><i style="width:0%"></i></div><span class="p">0%</span></div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="num">3</div>
+      <div class="scard mini">
+        <div class="s-head">
+          <span>🏠</span> Первый взнос на квартиру
+          <span class="drag">⠿</span>
+        </div>
+        <div class="mini-close"><div class="track"><i style="width:0%"></i></div><span class="p">0%</span></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+</body>
+</html>
