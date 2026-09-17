@@ -37,7 +37,7 @@
   --success: #16a34a;
   --danger: #dc2626;
   --warning: #f59e0b;
-  --radius: 14px;
+  --radius: 18px;
 }
 
 [data-theme="amber"] {
@@ -88,4 +88,41 @@ body {
 
 .bg-grad-primary {
   background-image: linear-gradient(135deg, var(--primary), var(--primary-2));
+}
+
+@keyframes goalup-float {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-14px) scale(1.03);
+  }
+}
+
+.animate-float {
+  animation: goalup-float 9s ease-in-out infinite;
+}
+
+@keyframes goalup-pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.72);
+  }
+}
+
+.animate-pulse-dot {
+  animation: goalup-pulse-dot 2.4s ease-in-out infinite;
+}
+
+.text-grad-primary {
+  background-image: linear-gradient(135deg, var(--primary), var(--primary-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }

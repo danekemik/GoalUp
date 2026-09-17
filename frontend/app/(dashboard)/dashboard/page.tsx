@@ -1,160 +1,212 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { QueueGoal, type QueueGoalProps } from "@/components/dashboard/queue-goal";
-import { WalletSummary } from "@/components/dashboard/wallet-summary";
+import {
+  GoalHeroCarousel,
+  type HeroGoal,
+} from "@/components/dashboard/goal-hero-carousel";
+import { WhatIf } from "@/components/dashboard/what-if";
+import { MiniProgressChart } from "@/components/dashboard/mini-progress-chart";
 import { formatRubles } from "@/lib/format";
 
-const wallet = {
-  balance: 216_000,
-  saved: 216_000,
-  delta30: 8_000,
-};
-
-const goals: QueueGoalProps[] = [
+const goals: HeroGoal[] = [
   {
-    order: 1,
-    icon: "🛟",
-    name: "Подушка безопасности",
-    meta: "порядок №1 · активная цель",
-    target: 300_000,
-    saved: 192_000,
-    status: "active",
-    pace: 9_000,
-    deadline: "10 дек 2026",
-    forecast: "к 1 дек",
-    cascadeNext: "Отпуск в Грузии",
+    id: "macbook",
+    emoji: "💻",
+    name: "MacBook Pro",
+    target: 240_000,
+    saved: 118_400,
+    state: "ahead",
+    stateLabel: "Успеваешь",
+    forecast: "ноя 2027",
+    gradient: "from-sky-400 via-blue-500 to-indigo-500",
+    accent: "#2563eb",
+    glow: "bg-sky-400/30",
+    shape: "border-white/30",
   },
   {
-    order: 2,
-    icon: "🏖️",
-    name: "Отпуск в Грузии",
-    meta: "порядок №2 · в ожидании каскада",
+    id: "japan",
+    emoji: "🌸",
+    name: "Отпуск в Японии",
+    target: 320_000,
+    saved: 141_200,
+    state: "onTime",
+    stateLabel: "В процессе",
+    forecast: "июнь 2028",
+    gradient: "from-pink-400 via-rose-500 to-fuchsia-500",
+    accent: "#db2777",
+    glow: "bg-rose-400/30",
+    shape: "border-white/30",
+  },
+  {
+    id: "car",
+    emoji: "🚗",
+    name: "Новая машина",
+    target: 1_500_000,
+    saved: 620_000,
+    state: "push",
+    stateLabel: "Нужно ускориться",
+    forecast: "июль 2030",
+    gradient: "from-lime-400 via-green-500 to-emerald-500",
+    accent: "#16a34a",
+    glow: "bg-lime-400/30",
+    shape: "border-white/30",
+  },
+  {
+    id: "fender",
+    emoji: "🎸",
+    name: "Гитара Fender",
     target: 120_000,
-    saved: 120_000,
-    status: "covered",
-  },
-  {
-    order: 3,
-    icon: "🚗",
-    name: "Автомобиль",
-    meta: "порядок №3 · в очереди",
-    target: 1_800_000,
-    saved: 0,
-    status: "queued",
-    forecast: "янв 2029",
+    saved: 96_500,
+    state: "ahead",
+    stateLabel: "Успеваешь",
+    forecast: "фев 2027",
+    gradient: "from-violet-400 via-purple-500 to-indigo-500",
+    accent: "#7c3aed",
+    glow: "bg-violet-400/30",
+    shape: "border-white/30",
   },
 ];
 
-const operations = [
-  { label: "Пополнение", amount: 8_000, kind: "in" },
-  { label: "Снятие · такси", amount: -3_000, kind: "out" },
-  { label: "Завершение · Отпуск", amount: -120_000, kind: "complete" },
-  { label: "Завершение · MacBook", amount: -96_000, kind: "complete" },
-];
+const totalSaved = goals.reduce((s, g) => s + g.saved, 0);
+const pace = 41_700;
 
-function StatCard({ k, v, d }: { k: string; v: string; d: string }) {
+function StatCard({
+  label,
+  value,
+  note,
+  emoji,
+  accent,
+}: {
+  label: string;
+  value: string;
+  note: string;
+  emoji: string;
+  accent: string;
+}) {
   return (
-    <Card>
-      <CardContent className="p-4">
-        <p className="text-xs font-medium text-muted-foreground">{k}</p>
-        <p className="mt-1.5 text-[22px] font-extrabold tracking-tight tabular-nums">{v}</p>
-        <p className="mt-1.5 text-xs font-bold text-muted-foreground">{d}</p>
-      </CardContent>
-    </Card>
+    <div className="relative overflow-hidden rounded-3xl border border-white/70 bg-white/70 p-5 shadow-[0_20px_50px_-30px_rgba(80,30,180,.3)] backdrop-blur-xl transition-transform hover:-translate-y-1">
+      <span
+        className="absolute -right-8 -top-10 size-28 rounded-full blur-2xl"
+        style={{ background: accent }}
+        aria-hidden="true"
+      />
+      <div className="flex items-center justify-between">
+        <p className="text-xs font-extrabold uppercase tracking-wide text-muted-foreground">
+          {label}
+        </p>
+        <span className="text-xl" aria-hidden="true">
+          {emoji}
+        </span>
+      </div>
+      <p className="mt-2 text-2xl font-extrabold tracking-tight tabular-nums sm:text-3xl">
+        {value}
+      </p>
+      <p className="mt-1 text-xs text-muted-foreground">{note}</p>
+    </div>
   );
 }
 
 export default function DashboardPage() {
-  const freeRemainder = wallet.balance - 192_000;
-
   return (
-    <main className="mx-auto grid w-full max-w-6xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[minmax(0,1fr)_300px] xl:gap-8">
-      <div>
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-xs font-semibold text-muted-foreground">Главная</p>
-          <Button>＋ Пополнить</Button>
+    <main className="relative mx-auto w-full max-w-7xl flex-1 px-4 py-8 sm:px-6">
+      <span
+        className="pointer-events-none absolute -left-24 top-24 size-80 rounded-full bg-violet-300/30 blur-3xl"
+        aria-hidden="true"
+      />
+      <span
+        className="pointer-events-none absolute -right-20 top-40 size-72 rounded-full bg-sky-200/40 blur-3xl"
+        aria-hidden="true"
+      />
+      <span
+        className="pointer-events-none absolute bottom-40 left-1/3 size-64 rounded-full bg-fuchsia-200/30 blur-3xl"
+        aria-hidden="true"
+      />
+
+      <header className="relative flex flex-wrap items-end justify-between gap-6">
+        <div>
+          <p className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-extrabold uppercase tracking-wide text-primary">
+            <span className="size-1.5 rounded-full bg-primary animate-pulse-dot" />
+            8 месяцев продуктивности
+          </p>
+          <h1 className="mt-4 text-4xl font-extrabold tracking-tight sm:text-5xl">
+            Привет, Даня! 👋
+          </h1>
+          <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
+            Твои копилки бьют рекорды. Общая сумма накоплений —{" "}
+            <b className="text-foreground">{formatRubles(totalSaved)}</b>.
+          </p>
         </div>
 
-        <h1 className="mt-4 text-2xl font-extrabold tracking-tight">
-          Привет, Даня! 👋
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          В кошельке {formatRubles(wallet.balance)}. Остаток каскада пойдёт на
-          активную цель.
-        </p>
-
-        <section className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <StatCard
-            k="Кошелёк сейчас"
-            v={formatRubles(wallet.balance)}
-            d={`${formatRubles(wallet.delta30, true)} за 30 дней`}
-          />
-          <StatCard k="Активная цель" v="1" d="из 3 в очереди" />
-          <StatCard k="Свободный остаток" v={formatRubles(freeRemainder)} d="идёт на активную" />
-          <StatCard k="Ближайший дедлайн" v="10.12" d="успеваешь" />
-        </section>
-
-        <div className="mt-7 flex items-center justify-between">
-          <h2 className="text-base font-extrabold tracking-tight">Очередь целей</h2>
-          <span className="text-[13px] font-bold text-primary">
-            Как работает очередь →
-          </span>
+        <div className="relative animate-float">
+          <Button
+            size="lg"
+            className="h-14 rounded-2xl bg-grad-primary px-8 text-base shadow-[0_24px_48px_-16px_rgba(124,58,237,.8)]"
+          >
+            ＋ Создать цель
+          </Button>
         </div>
+      </header>
 
-        <section className="mt-3">
-          {goals.map((g) => (
-            <QueueGoal key={g.order} {...g} />
-          ))}
-        </section>
-
-        <p className="mt-8 text-center text-xs text-muted-foreground">
-          Демо-данные. Подключение к API — на этапе Foundation.
-        </p>
-      </div>
-
-      <aside className="space-y-4">
-        <WalletSummary
+      <section className="relative mt-8 grid gap-4 sm:grid-cols-3">
+        <StatCard
           label="Всего накоплено"
-          value={formatRubles(wallet.saved)}
-          delta={`${formatRubles(wallet.delta30, true)} за 30 дней`}
+          value={formatRubles(totalSaved)}
+          note="+118 400 ₽ за последний месяц"
+          emoji="💎"
+          accent="rgba(139,92,246,.35)"
         />
+        <StatCard
+          label="Средний темп"
+          value={formatRubles(pace) + "/мес"}
+          note="растёт с каждым месяцем"
+          emoji="⚡"
+          accent="rgba(56,189,248,.3)"
+        />
+        <StatCard
+          label="Ближайший дедлайн"
+          value="10 дек"
+          note="до «Гитары Fender»"
+          emoji="🎯"
+          accent="rgba(244,114,182,.3)"
+        />
+      </section>
 
-        <Card>
-          <CardContent className="p-4">
-            <h3 className="text-sm font-extrabold">Последние операции</h3>
-            <div>
-              {operations.map((op, i) => (
-                <div
-                  key={i}
-                  className="flex items-center justify-between border-b border-border py-2 text-[12.5px] last:border-0"
-                >
-                  <span className="text-foreground">{op.label}</span>
-                  <span
-                    className={`font-extrabold tabular-nums ${
-                      op.kind === "in"
-                        ? "text-success"
-                        : op.kind === "complete"
-                          ? "text-primary"
-                          : "text-danger"
-                    }`}
-                  >
-                    {formatRubles(op.amount, true)}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+      <section className="relative mt-12">
+        <GoalHeroCarousel goals={goals} />
+      </section>
 
-        <Card>
-          <CardContent className="border-dashed border-border p-4 text-xs leading-relaxed text-muted-foreground">
-            <p className="mb-1 font-bold text-foreground">Правило каскада.</p>
-            Все пополнения автоматически добегают до ближайшей незакрытой цели.
-            Порядок меняется перетаскиванием. Снятие — только в пределах
-            кошелька.
-          </CardContent>
-        </Card>
-      </aside>
+      <section className="relative mt-14 grid gap-6 lg:grid-cols-[1.3fr_1fr] lg:items-stretch">
+        <WhatIf
+          goalName="Машина"
+          target={1_500_000}
+          saved={620_000}
+          pace={pace * 0.4}
+        />
+        <div className="relative overflow-hidden rounded-[30px] border border-white/70 bg-card p-6 shadow-[0_30px_60px_-30px_rgba(80,30,180,.25)] sm:p-8">
+          <span className="absolute -right-14 -top-16 size-48 rounded-full bg-sky-200/30 blur-3xl" />
+          <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-primary">
+            Прогресс
+          </p>
+          <h2 className="mt-1 text-2xl font-extrabold tracking-tight sm:text-3xl">
+            От золотой мечты к цели
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Накопления за последние месяцы
+          </p>
+          <div className="mt-6">
+            <MiniProgressChart />
+          </div>
+          <div className="mt-5 flex items-center justify-between rounded-2xl border border-border bg-muted/40 px-4 py-3">
+            <span className="text-xs text-muted-foreground">Сентябрь → сегодня</span>
+            <span className="text-sm font-extrabold tabular-nums">
+              {formatRubles(134_000)} → {formatRubles(totalSaved)}
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <p className="mt-14 text-center text-xs text-muted-foreground">
+        Демо-данные. Подключение к API — на этапе Foundation.
+      </p>
     </main>
   );
 }
