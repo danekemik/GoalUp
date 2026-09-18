@@ -19,13 +19,13 @@ export function DashboardShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-full">
-      <header className="sticky top-0 z-40 border-b border-white/40 bg-white/60 backdrop-blur-xl dark:border-border dark:bg-background/70">
+      <header className="sticky top-0 z-40 border-b border-white/30 bg-white/35 backdrop-blur-2xl dark:border-border dark:bg-background/70">
         <div className="mx-auto flex h-16 w-full items-center justify-between gap-3 px-4 sm:px-6">
           <Link href="/dashboard" aria-label="GoalUp">
             <Logo />
           </Link>
 
-          <nav className="hidden items-center gap-1 rounded-full border border-border/60 bg-card/70 p-1 shadow-[0_8px_30px_-12px_rgba(80,40,180,.25)] backdrop-blur lg:flex">
+          <nav className="hidden items-center gap-1 rounded-full border border-white/50 bg-white/50 p-1 shadow-[0_8px_30px_-12px_rgba(80,40,180,.25)] backdrop-blur-xl lg:flex">
             {nav.map((item) => {
               const active = pathname === item.href;
               return (
@@ -35,7 +35,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
                   className={`rounded-full px-4 py-1.5 text-[13px] font-bold transition-colors ${
                     active
                       ? "bg-grad-primary text-primary-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
+                      : "text-foreground/65 hover:text-foreground"
                   }`}
                 >
                   {item.label}
@@ -63,7 +63,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
               className={`whitespace-nowrap rounded-full px-4 py-1.5 text-[13px] font-bold transition-colors ${
                 active
                   ? "bg-grad-primary text-primary-foreground shadow-sm"
-                  : "border border-border/70 bg-card/60 text-muted-foreground"
+                  : "border border-white/50 bg-white/40 text-foreground/60"
               }`}
             >
               {item.label}

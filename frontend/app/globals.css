@@ -21,13 +21,13 @@
 }
 
 [data-theme="pulse"] {
-  --background: #f6f7fb;
-  --foreground: #1e1b33;
+  --background: #f7f8ff;
+  --foreground: #17172b;
   --card: #ffffff;
-  --card-foreground: #1e1b33;
-  --muted: #eeedf6;
-  --muted-foreground: #5d5a75;
-  --border: #e3e1f0;
+  --card-foreground: #17172b;
+  --muted: #ecebf8;
+  --muted-foreground: #5d5b7a;
+  --border: #dfddf2;
   --primary: #7c3aed;
   --primary-2: #8b5cf6;
   --primary-foreground: #ffffff;
@@ -37,7 +37,7 @@
   --success: #16a34a;
   --danger: #dc2626;
   --warning: #f59e0b;
-  --radius: 18px;
+  --radius: 26px;
 }
 
 [data-theme="amber"] {
@@ -125,4 +125,203 @@ body {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+/* =========================================================
+   Aurora · многослойный фон главной страницы
+   ========================================================= */
+
+.goalup-aurora {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 90% at 50% -8%, rgba(228, 226, 255, 0.9) 0%, rgba(255, 255, 255, 0) 55%),
+    linear-gradient(
+      180deg,
+      #f7f8ff 0%,
+      #f4f3ff 32%,
+      #f8f1ff 60%,
+      #eef7fc 100%
+    );
+}
+
+.goalup-rings {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.goalup-ring {
+  position: absolute;
+  border: 1.5px dashed rgba(23, 23, 43, 0.1);
+  border-radius: 9999px;
+}
+.goalup-orb {
+  position: absolute;
+  border-radius: 9999px;
+  border: 1px solid rgba(139, 92, 246, 0.22);
+  background: rgba(255, 255, 255, 0.18);
+}
+
+/* Цветные пятна ауры — плавно «перетекают» при смене активной цели:
+   фон задаётся через CSS-переменные, background-color анимируется */
+.goalup-theme {
+  --aurora-1: rgba(139, 92, 246, 0.32);
+  --aurora-2: rgba(79, 70, 229, 0.28);
+  --aurora-3: rgba(244, 114, 182, 0.22);
+  --aurora-4: rgba(253, 186, 116, 0.2);
+  --aurora-halo: rgba(139, 92, 246, 0.5);
+}
+
+.goalup-splotch {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(84px);
+  background-color: var(--aurora-1);
+  transition: background-color 1.4s ease;
+  will-change: transform;
+  animation: goalup-drift-a 26s ease-in-out infinite;
+}
+.goalup-splotch--b {
+  background-color: var(--aurora-2);
+  animation: goalup-drift-b 32s ease-in-out infinite;
+}
+.goalup-splotch--c {
+  background-color: var(--aurora-3);
+  animation: goalup-drift-c 29s ease-in-out infinite;
+}
+.goalup-splotch--d {
+  background-color: var(--aurora-4);
+  animation: goalup-drift-d 24s ease-in-out infinite;
+}
+
+.goalup-halo {
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(940px, 96vw);
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  background-color: var(--aurora-halo);
+  filter: blur(64px);
+  pointer-events: none;
+  opacity: 0.85;
+  transition: background-color 1.4s ease;
+  animation: goalup-halo-pulse 10s ease-in-out infinite;
+}
+@keyframes goalup-halo-pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+
+.goalup-noise {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+}
+
+/* Вспышка на milestone */
+.goalup-burst {
+  animation: goalup-burst 1.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes goalup-burst {
+  0% {
+    transform: scale(0.35);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
+  }
+}
+
+/* Парящие частицы в шапке карточки */
+.goalup-float-slow {
+  animation: goalup-float-slow 11s ease-in-out infinite;
+}
+@keyframes goalup-float-slow {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-16px) rotate(4deg);
+  }
+}
+
+/* Медленный «перелив» градиента в шапке карточки */
+.goalup-animate-gradient {
+  animation: goalup-gradient-pan 18s ease-in-out infinite alternate;
+}
+@keyframes goalup-gradient-pan {
+  from {
+    background-position: 0% 30%;
+  }
+  to {
+    background-position: 100% 70%;
+  }
+}
+
+/* Свечение вокруг прогресс-кольца */
+.goalup-ring-glow {
+  filter: drop-shadow(0 8px 22px var(--ring-glow, transparent));
+}
+
+/* Плавное появление страницы */
+@keyframes goalup-rise {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.goalup-rise {
+  animation: goalup-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.goalup-delay-1 {
+  animation-delay: 0.1s;
+}
+.goalup-delay-2 {
+  animation-delay: 0.2s;
+}
+.goalup-delay-3 {
+  animation-delay: 0.3s;
+}
+.goalup-delay-4 {
+  animation-delay: 0.4s;
+}
+
+/* Доступность: видимый фокус для клавиатуры */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Доступность: уважение к prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
